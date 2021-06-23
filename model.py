@@ -162,7 +162,7 @@ def SSL(sess_emb_hgnn, sess_emb_lgcn):
 
     pos = score(sess_emb_hgnn, sess_emb_lgcn)
     neg1 = score(sess_emb_lgcn, row_column_shuffle(sess_emb_hgnn))
-    one = torch.cuda.FloatTensor(neg1.shape[0]).fill_(1)
+    one = torch.cuda.FloatTensor(neg1.shape[0], neg1.shape[1]).fill_(1)
     # one = zeros = torch.ones(neg1.shape[0])
     con_loss = torch.sum(-torch.log(1e-8 + torch.sigmoid(pos)) - torch.log(1e-8 + (one - torch.sigmoid(neg1))))
     return con_loss
