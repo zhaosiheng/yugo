@@ -219,7 +219,7 @@ def train_test(model, train_data, test_data):
     result = []
     hit, mrr = [], []
     for data in test_loader:
-        targets, scores = forward(model, data)
+        targets, scores, con_loss = forward(model, data)
         sub_scores = scores.topk(20)[1]
         sub_scores = trans_to_cpu(sub_scores).detach().numpy()
         targets = targets.numpy()
