@@ -23,6 +23,7 @@ class CombineGraph(Module):
         self.sample_num = opt.n_sample
         self.adj_all = trans_to_cuda(torch.Tensor(adj_all)).long()
         self.num = trans_to_cuda(torch.Tensor(num)).float()
+        self.lambda = opt.lambda
 
         # Aggregator
         self.local_agg = LocalAggregator(self.dim, self.opt.alpha, dropout=0.0)
@@ -205,7 +206,7 @@ def train_test(model, train_data, test_data):
         model.optimizer.zero_grad()
         targets, scores, con_loss = forward(model, data)
         targets = trans_to_cuda(targets).long()
-        loss = model.loss_function(scores, targets - 1) + con_loss * (model.opt.lambda)
+        loss = model.loss_function(scores, targets - 1) + con_loss * (model.lambda)
         loss.backward()
         model.optimizer.step()
         total_loss += loss
