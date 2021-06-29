@@ -23,7 +23,7 @@ class CombineGraph(Module):
         self.sample_num = opt.n_sample
         self.adj_all = trans_to_cuda(torch.Tensor(adj_all)).long()
         self.num = trans_to_cuda(torch.Tensor(num)).float()
-        self.lamda = opt.lamda
+        
 
         # Aggregator
         self.local_agg = LocalAggregator(self.dim, self.opt.alpha, dropout=0.0)
