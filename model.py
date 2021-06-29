@@ -162,7 +162,7 @@ def train_test(model, train_data, test_data):
                                                shuffle=True, pin_memory=True)
     for data in tqdm(train_loader):
         model.optimizer.zero_grad()
-        targets, scores, con_loss = forward(model, data)
+        targets, scores = forward(model, data)
         targets = trans_to_cuda(targets).long()
         loss = model.loss_function(scores, targets - 1) 
         loss.backward()
@@ -178,7 +178,7 @@ def train_test(model, train_data, test_data):
     result = []
     hit, mrr = [], []
     for data in test_loader:
-        targets, scores, con_loss = forward(model, data)
+        targets, scores = forward(model, data)
         sub_scores = scores.topk(20)[1]
         sub_scores = trans_to_cpu(sub_scores).detach().numpy()
         targets = targets.numpy()
