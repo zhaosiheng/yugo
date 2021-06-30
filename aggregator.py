@@ -27,6 +27,7 @@ class LocalAggregator(nn.Module):
         self.a_1 = nn.Parameter(torch.Tensor(self.dim, 1))
         self.a_2 = nn.Parameter(torch.Tensor(self.dim, 1))
         self.a_3 = nn.Parameter(torch.Tensor(self.dim, 1))
+        self.a_4 = nn.Parameter(torch.Tensor(self.dim, 1))
         self.bias = nn.Parameter(torch.Tensor(self.dim))
 
         self.leakyrelu = nn.LeakyReLU(alpha)
