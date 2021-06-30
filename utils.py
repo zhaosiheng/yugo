@@ -83,7 +83,7 @@ class Data(Dataset):
         alias_inputs = [np.where(node == i)[0][0] for i in u_input]
 
         return [torch.tensor(alias_inputs), adj_hop, torch.tensor(items),
-                torch.tensor(mask), torch.tensor(target), torch.tensor(u_input)]ad_hop
+                torch.tensor(mask), torch.tensor(target), torch.tensor(u_input)]
 
     def __len__(self):
         return self.length
