@@ -40,26 +40,29 @@ class LocalAggregator(nn.Module):
                    * h.repeat(1, N, 1)).view(batch_size, N, N, self.dim)
 
         e_0 = torch.matmul(a_input, self.a_0)
-        '''
         e_1 = torch.matmul(a_input, self.a_1)
         e_2 = torch.matmul(a_input, self.a_2)
         e_3 = torch.matmul(a_input, self.a_3)
-        '''
+        e_4 = torch.matmul(a_input, self.a_4)
+
         e_0 = self.leakyrelu(e_0).squeeze(-1).view(batch_size, N, N)
-        '''
         e_1 = self.leakyrelu(e_1).squeeze(-1).view(batch_size, N, N)
         e_2 = self.leakyrelu(e_2).squeeze(-1).view(batch_size, N, N)
         e_3 = self.leakyrelu(e_3).squeeze(-1).view(batch_size, N, N)
-        '''
-        mask = -9e15 * torch.ones_like(e_0)
-        alpha = torch.where(adj[:,0].eq(1), e_0, mask)
-        '''
-        alpha = torch.where(adj.eq(2), e_1, alpha)
-        alpha = torch.where(adj.eq(3), e_2, alpha)
-        alpha = torch.where(adj.eq(4), e_3, alpha)
-        '''
-        alpha = torch.softmax(alpha, dim=-1)
+        e_4 = self.leakyrelu(e_4).squeeze(-1).view(batch_size, N, N)
 
+        mask = -9e15 * torch.ones_like(e_0)
+        ex0 = torch.where(adj[:,0].eq(1), e_0, mask).exp()
+        ex1 = torch.where(adj[:, 1].eq(2), e_1, mask).exp()
+        ex2 = torch.where(adj[:, 2].eq(3), e_2, mask).exp()
+        ex3 = torch.where(adj[:, 3].eq(4), e_3, mask).exp()
+        ex4 = torch.where(adj[:, 4].eq(5), e_4, mask).exp()
+
+        tmp = torch.stack([ex0,ex1,ex2,ex3,ex4]).sum(dim=0)
+        s = torch.sum(tmp, dim=-1, keepdim=True)
+        s = torch.where(s.eq(0), torch.ones_like(s), s)
+        alpha = tmp / s
+        #0.0145
         output = torch.matmul(alpha, h)
         return output
 
