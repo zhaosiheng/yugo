@@ -35,6 +35,7 @@ parser.add_argument('--valid_portion', type=float, default=0.1, help='split the 
 parser.add_argument('--alpha', type=float, default=0.2, help='Alpha for the leaky_relu.')
 parser.add_argument('--patience', type=int, default=3)
 parser.add_argument('--hop', type=int, default=5)
+parser.add_argument('--long_edge_dropout', type=float, default=0.0)
 
 
 opt = parser.parse_args()
