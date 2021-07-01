@@ -18,16 +18,14 @@ class Aggregator(nn.Module):
 
 
 class LocalAggregator(nn.Module):
-    def __init__(self, dim, alpha, dropout=0., name=None):
+    def __init__(self, dim, alpha, dropout=0.,hop=1, name=None):
         super(LocalAggregator, self).__init__()
         self.dim = dim
         self.dropout = dropout
 
-        self.a_0 = nn.Parameter(torch.Tensor(self.dim, 1))
-        self.a_1 = nn.Parameter(torch.Tensor(self.dim, 1))
-        self.a_2 = nn.Parameter(torch.Tensor(self.dim, 1))
-        self.a_3 = nn.Parameter(torch.Tensor(self.dim, 1))
-        self.a_4 = nn.Parameter(torch.Tensor(self.dim, 1))
+        self.hop = hop
+        self.a_list = torch.nn.ParameterList([nn.Parameter(torch.Tensor(self.dim, 1)) for i in range(hop)])
+
         self.bias = nn.Parameter(torch.Tensor(self.dim))
 
         self.leakyrelu = nn.LeakyReLU(alpha)
@@ -40,32 +38,25 @@ class LocalAggregator(nn.Module):
         a_input = (h.repeat(1, 1, N).view(batch_size, N * N, self.dim)
                    * h.repeat(1, N, 1)).view(batch_size, N, N, self.dim)
 
-        e_0 = torch.matmul(a_input, self.a_0)
-        e_1 = torch.matmul(a_input, self.a_1)
-        e_2 = torch.matmul(a_input, self.a_2)
-        e_3 = torch.matmul(a_input, self.a_3)
-        e_4 = torch.matmul(a_input, self.a_4)
+        e_list = []
+        for i in range(self.hop):
+            tmp = torch.matmul(a_input, self.a_list[i])
+            tmp = self.leakyrelu(tmp).squeeze(-1).view(batch_size, N, N)
+            e_list.append(tmp)
 
-        e_0 = self.leakyrelu(e_0).squeeze(-1).view(batch_size, N, N)
-        e_1 = self.leakyrelu(e_1).squeeze(-1).view(batch_size, N, N)
-        e_2 = self.leakyrelu(e_2).squeeze(-1).view(batch_size, N, N)
-        e_3 = self.leakyrelu(e_3).squeeze(-1).view(batch_size, N, N)
-        e_4 = self.leakyrelu(e_4).squeeze(-1).view(batch_size, N, N)
 
-        mask = -9e15 * torch.ones_like(e_0)
-        ex0 = torch.where(adj[:,0].eq(1), e_0, mask).exp()
-        ex1 = torch.where(adj[:, 1].eq(2), e_1, mask).exp()
-        ex2 = torch.where(adj[:, 2].eq(3), e_2, mask).exp()
-        ex3 = torch.where(adj[:, 3].eq(4), e_3, mask).exp()
-        ex4 = torch.where(adj[:, 4].eq(5), e_4, mask).exp()
+        mask = -9e15 * torch.ones_like(e_list[0])
+        for i in range(self.hop):
+            e_list[i] = torch.where(adj[:,i].eq(i+1), e_list[i], mask).exp()
 
-        tmp = torch.stack([ex0,ex1,ex2,ex3,ex4]).sum(dim=0)
+        tmp = torch.stack(e_list).sum(dim=0)
         s = torch.sum(tmp, dim=-1, keepdim=True)
         s = torch.where(s.eq(0), torch.ones_like(s), s)
         alpha = tmp / s
         #0.0145
         output = torch.matmul(alpha, h)
         return output
+
 
 
 class GlobalAggregator(nn.Module):
