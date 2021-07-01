@@ -70,8 +70,8 @@ def main():
 
     adj = pickle.load(open('datasets/' + opt.dataset + '/adj_' + str(opt.n_sample_all) + '.pkl', 'rb'))
     num = pickle.load(open('datasets/' + opt.dataset + '/num_' + str(opt.n_sample_all) + '.pkl', 'rb'))
-    train_data = Data(train_data)
-    test_data = Data(test_data)
+    train_data = Data(train_data, hop=opt.hop)
+    test_data = Data(test_data, hop=opt.hop)
 
     adj, num = handle_adj(adj, num_node, opt.n_sample_all, num)
     model = trans_to_cuda(CombineGraph(opt, num_node, adj, num))
