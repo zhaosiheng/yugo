@@ -26,7 +26,7 @@ class CombineGraph(Module):
         
 
         # Aggregator
-        self.local_agg = LocalAggregator(self.dim, self.opt.alpha, dropout=0.0)
+        self.local_agg = LocalAggregator(self.dim, self.opt.alpha, dropout=0.0, hop=opt.hop)
         self.global_agg = []
         for i in range(self.hop):
             if opt.activate == 'relu':
