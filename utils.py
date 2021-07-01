@@ -51,13 +51,14 @@ def handle_adj(adj_dict, n_entity, sample_num, num_dict=None):
 
 
 class Data(Dataset):
-    def __init__(self, data, train_len=None):
+    def __init__(self, data, train_len=None, hop=1):
         inputs, mask, max_len = handle_data(data[0], train_len)
         self.inputs = np.asarray(inputs)
         self.targets = np.asarray(data[1])
         self.mask = np.asarray(mask)
         self.length = len(data[0])
         self.max_len = max_len
+        self.hop = hop
 
     def __getitem__(self, index):
         u_input, mask, target = self.inputs[index], self.mask[index], self.targets[index]
@@ -67,7 +68,7 @@ class Data(Dataset):
         items = node.tolist() + (max_n_node - len(node)) * [0]
         
         adj_hop = []
-        for hop in range(5):
+        for hop in range(self.hop):
             adj = np.zeros((max_n_node,max_n_node))
             for i in np.arange(len(u_input) - hop):
                 v = np.where(node == u_input[i])[0][0]
