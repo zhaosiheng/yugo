@@ -201,7 +201,7 @@ def train_test(model, train_data, test_data):
     for data in test_loader:
         targets, scores = forward(model, data)
         sub_scores = scores.topk(20)[1]
-        sub_scores_alias = scores.tok(10)[1]
+        sub_scores_alias = scores.topk(10)[1]
         sub_scores = trans_to_cpu(sub_scores).detach().numpy()
         sub_scores_alias = trans_to_cpu(sub_scores_alias).detach().numpy()
         targets = targets.numpy()
