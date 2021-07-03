@@ -212,12 +212,14 @@ def train_test(model, train_data, test_data):
                 mrr.append(0)
             else:
                 mrr.append(1 / (np.where(score == target - 1)[0][0] + 1))
+                
+        for score, target, mask in zip(sub_scores_alias, targets, test_data.mask):
             #@10
-            hit_alias.append(np.isin(target - 1, score_alias))
-            if len(np.where(score_alias == target - 1)[0]) == 0:
+            hit_alias.append(np.isin(target - 1, score))
+            if len(np.where(score == target - 1)[0]) == 0:
                 mrr_alias.append(0)
             else:
-                mrr_alias.append(1 / (np.where(score_alias == target - 1)[0][0] + 1))
+                mrr_alias.append(1 / (np.where(score == target - 1)[0][0] + 1))
             
 
     result.append(np.mean(hit) * 100)
