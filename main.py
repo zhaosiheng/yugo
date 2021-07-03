@@ -94,11 +94,11 @@ def main():
             best_epoch[1] = epoch
             flag = 1
             
-        if hit_alias >= best_result[0]:
+        if hit_alias >= best_result[2]:
             best_result[2] = hit_alias
             best_epoch[2] = epoch
             flag = 1
-        if mrr_alias >= best_result[1]:
+        if mrr_alias >= best_result[3]:
             best_result[3] = mrr_alias
             best_epoch[3] = epoch
             flag = 1
