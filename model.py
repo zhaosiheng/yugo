@@ -176,7 +176,7 @@ def train_test(model, train_data, test_data):
     test_loader = torch.utils.data.DataLoader(test_data, num_workers=4, batch_size=model.batch_size,
                                               shuffle=False, pin_memory=True)
     result = []
-    hit, mrr = [], []
+    hit, mrr, hit_alias, mrr_alias = [], [], [], []
     for data in test_loader:
         targets, scores = forward(model, data)
         sub_scores = scores.topk(20)[1]
