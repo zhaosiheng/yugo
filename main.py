@@ -79,8 +79,8 @@ def main():
 
     print(opt)
     start = time.time()
-    best_result = [0, 0]
-    best_epoch = [0, 0]
+    best_result = [0, 0, 0, 0]
+    best_epoch = [0, 0, 0, 0]
     bad_counter = 0
 
     for epoch in range(opt.epoch):
