@@ -38,7 +38,10 @@ class CombineGraph(Module):
 
         # Item representation & Position representation
         self.embedding = nn.Embedding(num_node, self.dim)
-        self.pos_embedding = nn.Embedding(200, self.dim)
+        
+        self.pos_emb = nn.Parameter(torch.Tensor(opt.pos_num, opt.pos_emb_len, self.dim))
+        self.mine_w_1 = nn.Parameter(torch.Tensor(1, opt.pos_emb_len))
+        
 
         # Parameters
         self.w_1 = nn.Parameter(torch.Tensor(2 * self.dim, self.dim))
@@ -72,10 +75,17 @@ class CombineGraph(Module):
 
         batch_size = hidden.shape[0]
         len = hidden.shape[1]
-        pos_emb = self.pos_embedding.weight[:len]
-        pos_emb = pos_emb.unsqueeze(0).repeat(batch_size, 1, 1)
 
         hs = torch.sum(hidden * mask, -2) / torch.sum(mask, 1)
+        
+        '''(1)'''
+        key = torch.matmul(self.mine_w_1, self.pos_emb)
+        query = hs.unsqueeze(-2).unsqueeze(-2)
+        e = torch.matmul(query,key.transpose(-2,-1))
+        gama = torch.softmax(e, 1)
+        pos_emb = (gama * self.pos_emb).sum(1)
+        pos_emb = pos_emb[:,:len,:]
+        
         hs = hs.unsqueeze(-2).repeat(1, len, 1)
         nh = torch.matmul(torch.cat([pos_emb, hidden], -1), self.w_1)
         nh = torch.tanh(nh)
