@@ -82,7 +82,7 @@ class CombineGraph(Module):
         key = torch.matmul(self.mine_w_1, self.pos_emb)
         query = hs.unsqueeze(-2).unsqueeze(-2)
         e = torch.matmul(query,key.transpose(-2,-1))
-        gama = torch.softmax(e, 1)
+        gama = torch.softmax(self.leakyrelu(e), 1)
         pos_emb = (gama * self.pos_emb).sum(1)
         pos_emb = pos_emb[:,:len,:]
         
