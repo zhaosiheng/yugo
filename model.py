@@ -81,7 +81,7 @@ class CombineGraph(Module):
 
         hs = torch.sum(hidden * mask, -2) / torch.sum(mask, 1)
         
-        '''(1)'''
+        '''(1)
         key = torch.matmul(self.mine_w_1, self.pos_emb)
         #query = hs.unsqueeze(-2).unsqueeze(-2)
         
@@ -91,17 +91,18 @@ class CombineGraph(Module):
         pos_emb = (gama * self.pos_emb).sum(1)
         pos_emb = pos_emb[:,:len,:]
         self.gama = gama
-        '''(2)
+        '''
+        '''(2)'''
         pos_emb = self.pos_emb[:, :len, :].unsqueeze(0).repeat(batch_size, 1, 1, 1)
         #h = hidden.unsqueeze(1).repeat(1, self.opt.pos_num, 1, 1)
         h = hidden.unsqueeze(1).repeat(1, self.opt.pos_num, 1, 1)
         key = torch.cosine_similarity(pos_emb, h, dim=-1).unsqueeze(-1) 
         query = self.mine_q_1[:, :len]
-        e = torch.matmul(query, 1+key)
-        gama = torch.softmax(self.leakyrelu(e), 1)
+        e = torch.matmul(query, key)
+        gama = torch.softmax(self.leakyrelu(e) * 10, 1)
         pos_emb = (gama * pos_emb).sum(1)
         self.gama = gama
-        '''
+        
         hs = hs.unsqueeze(-2).repeat(1, len, 1)
         nh = torch.matmul(torch.cat([pos_emb, hidden], -1), self.w_1)
         nh = torch.tanh(nh)
