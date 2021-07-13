@@ -92,7 +92,7 @@ class CombineGraph(Module):
         '''(2)'''
         pos_emb = self.pos_emb[:, :len, :].unsqueeze(0).repeat(batch_size, 1, 1, 1)
         h = hidden.unsqueeze(1).repeat(1, self.opt.pos_num, 1, 1)
-        key = torch.cosine_similarity(pos_emb, h, dim=-1).unsqueeze(-1)
+        key = torch.cosine_similarity(pos_emb, h, dim=-1).unsqueeze(-1) * 100
         query = self.mine_q_1[:, :len]
         e = torch.matmul(query, key)
         gama = torch.softmax(self.leakyrelu(e), 1)
