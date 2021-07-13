@@ -73,7 +73,7 @@ class CombineGraph(Module):
         # return self.adj_all[target.view(-1)][:, index], self.num[target.view(-1)][:, index]
         return self.adj_all[target.view(-1)], self.num[target.view(-1)]
 
-    def compute_scores(self, hidden, mask):
+    def compute_scores(self, hidden, mask, inputs):
         mask = mask.float().unsqueeze(-1)
 
         batch_size = hidden.shape[0]
@@ -91,7 +91,8 @@ class CombineGraph(Module):
         '''
         '''(2)'''
         pos_emb = self.pos_emb[:, :len, :].unsqueeze(0).repeat(batch_size, 1, 1, 1)
-        h = hidden.unsqueeze(1).repeat(1, self.opt.pos_num, 1, 1)
+        #h = hidden.unsqueeze(1).repeat(1, self.opt.pos_num, 1, 1)
+        h = self.embedding(inputs).unsqueeze(1).repeat(1, self.opt.pos_num, 1, 1)
         key = torch.cosine_similarity(pos_emb, h, dim=-1).unsqueeze(-1) 
         query = self.mine_q_1[:, :len]
         e = torch.matmul(query, 1+key)
@@ -174,7 +175,7 @@ def forward(model, data):
     hidden = model(items, adj, mask, inputs)
     get = lambda index: hidden[index][alias_inputs[index]]
     seq_hidden = torch.stack([get(i) for i in torch.arange(len(alias_inputs)).long()])
-    return targets, model.compute_scores(seq_hidden, mask)
+    return targets, model.compute_scores(seq_hidden, mask, inputs)
 
 
 def train_test(model, train_data, test_data):
