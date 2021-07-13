@@ -41,7 +41,7 @@ class CombineGraph(Module):
         
         self.pos_emb = nn.Parameter(torch.Tensor(opt.pos_num, opt.pos_emb_len, self.dim))
         self.mine_w_1 = nn.Parameter(torch.Tensor(1, opt.pos_emb_len))
-        self.mine_q_1 = nn.Parameter(torch.Tensor(1, opt.pos_emb_len))
+        #self.mine_q_1 = nn.Parameter(torch.Tensor(1, opt.pos_emb_len))
         
         
 
@@ -58,7 +58,7 @@ class CombineGraph(Module):
         self.scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer, step_size=opt.lr_dc_step, gamma=opt.lr_dc)
 
         self.reset_parameters()
-        
+        self.mine_q_1 = nn.Parameter(torch.arange(0, 10, 0.05).view(1, opt.pos_emb_len))
         
     def reset_parameters(self):
         stdv = 1.0 / math.sqrt(self.dim)
