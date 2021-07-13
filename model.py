@@ -94,7 +94,7 @@ class CombineGraph(Module):
         h = hidden.unsqueeze(1).repeat(1, self.opt.pos_num, 1, 1)
         key = torch.cosine_similarity(pos_emb, h, dim=-1).unsqueeze(-1) 
         query = self.mine_q_1[:, :len]
-        e = torch.matmul(query, 1-key)
+        e = torch.matmul(query, 1+key)
         gama = torch.softmax(self.leakyrelu(e), 1)
         pos_emb = (gama * pos_emb).sum(1)
         self.gama = gama
