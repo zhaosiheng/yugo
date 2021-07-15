@@ -99,7 +99,7 @@ class CombineGraph(Module):
         key = torch.cosine_similarity(pos_emb, h, dim=-1).unsqueeze(-1) 
         query = self.mine_q_1[:, :len]
         e = torch.matmul(query, key)
-        gama = torch.softmax(self.leakyrelu(e) * 10, 1)        
+        gama = torch.softmax(self.leakyrelu(e) * self.opt.amplify_coef, 1)        
         pos_emb = (gama * pos_emb).sum(1)
         self.gama = gama
         
