@@ -90,7 +90,7 @@ def main():
     for epoch in range(opt.epoch):
         print('-------------------------------------------------------')
         print('epoch: ', epoch)
-        hit, mrr, hit_alias, mrr_alias = train_test(model, train_data, test_data)
+        hit, mrr, hit_alias, mrr_alias = train_test(model, train_data, test_data, epoch)
         flag = 0
         if hit >= best_result[0]:
             best_result[0] = hit
