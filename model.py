@@ -73,7 +73,7 @@ class CombineGraph(Module):
         # return self.adj_all[target.view(-1)][:, index], self.num[target.view(-1)][:, index]
         return self.adj_all[target.view(-1)], self.num[target.view(-1)]
 
-    def compute_scores(self, hidden, mask, inputs):
+    def compute_scores(self, hidden, mask, inputs, epoch):
         mask = mask.float().unsqueeze(-1)
 
         batch_size = hidden.shape[0]
@@ -99,7 +99,7 @@ class CombineGraph(Module):
         key = torch.cosine_similarity(pos_emb, h, dim=-1).unsqueeze(-1) 
         query = self.mine_q_1[:, :len]
         e = torch.matmul(query, key)
-        gama = torch.softmax(self.leakyrelu(e) * self.opt.amplify_coef, 1)        
+        gama = torch.softmax(self.leakyrelu(e) *  0.5 * pow(1.3, epoch), 1)        
         pos_emb = (gama * pos_emb).sum(1)
         self.gama = gama
         
@@ -167,7 +167,7 @@ def trans_to_cpu(variable):
         return variable
 
 
-def forward(model, data):
+def forward(model, data, epoch):
     alias_inputs, adj, items, mask, targets, inputs = data
     alias_inputs = trans_to_cuda(alias_inputs).long()
     items = trans_to_cuda(items).long()
@@ -178,10 +178,10 @@ def forward(model, data):
     hidden = model(items, adj, mask, inputs)
     get = lambda index: hidden[index][alias_inputs[index]]
     seq_hidden = torch.stack([get(i) for i in torch.arange(len(alias_inputs)).long()])
-    return targets, model.compute_scores(seq_hidden, mask, inputs)
+    return targets, model.compute_scores(seq_hidden, mask, inputs, epoch)
 
 
-def train_test(model, train_data, test_data):
+def train_test(model, train_data, test_data, epoch):
     print('start training: ', datetime.datetime.now())
     model.train()
     total_loss = 0.0
@@ -189,7 +189,7 @@ def train_test(model, train_data, test_data):
                                                shuffle=True, pin_memory=True)
     for data in tqdm(train_loader):
         model.optimizer.zero_grad()
-        targets, scores = forward(model, data)
+        targets, scores = forward(model, data, epoch)
         targets = trans_to_cuda(targets).long()
         loss = model.loss_function(scores, targets - 1) 
         loss.backward()
@@ -205,7 +205,7 @@ def train_test(model, train_data, test_data):
     result = []
     hit, mrr, hit_alias, mrr_alias = [], [], [], []
     for data in test_loader:
-        targets, scores = forward(model, data)
+        targets, scores = forward(model, data, epoch)
         sub_scores = scores.topk(20)[1]
         sub_scores_alias = scores.topk(10)[1]
         sub_scores = trans_to_cpu(sub_scores).detach().numpy()
