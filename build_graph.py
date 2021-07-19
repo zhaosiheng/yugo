@@ -31,7 +31,9 @@ adj = [[] for _ in range(num)]
 for i in range(len(seq)):
     data = seq[i]
     for k in range(1, 4):
-        for j in range(len(data)-k):
+        for j in range(len(data)-k):            
+            if len(seq[i]) == 2 or len(seq[i]) == 3 or len(seq[i]) == 4:
+                continue
             relation.append([data[j], data[j+k]])
             relation.append([data[j+k], data[j]])
 
