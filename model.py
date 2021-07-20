@@ -42,10 +42,9 @@ class CombineGraph(Module):
         self.pos_emb = nn.Parameter(torch.Tensor(opt.pos_num, opt.pos_emb_len, self.dim))
         self.mine_w_1 = nn.Parameter(torch.Tensor(1, opt.pos_emb_len))
         self.mine_q_1 = nn.Parameter(torch.Tensor(1, opt.pos_emb_len))
-        self.classifer = nn.Sequential(nn.Linear(self.dim, self.dim),
-                                       nn.LeakyReLU(opt.alpha),
-                                       nn.Linear(self.dim, opt.pos_num))
         
+        self.Q = nn.Parameter(torch.Tensor(self.dim, self.dim))
+        self.P = nn.Parameter(torch.Tensor(self.dim, opt.pos_num))
 
         # Parameters
         self.w_1 = nn.Parameter(torch.Tensor(2 * self.dim, self.dim))
@@ -110,7 +109,7 @@ class CombineGraph(Module):
         '''
         '''(3)'''
         pos_emb = self.pos_emb[:, :len, :].unsqueeze(0).repeat(batch_size, 1, 1, 1)
-        h = self.classifer(hidden).sum(-2) / mask.squeeze(-1).sum(-1).unsqueeze(-1)
+        h = torch.matmul(self.leakyrelu(torch.matmul(hidden, self.Q)), self.P).sum(-2) / mask.squeeze(-1).sum(-1).unsqueeze(-1)
         gama = torch.softmax(h * min(0.5 * pow(20 / 0.5, epoch / self.opt.E), 20), 1).view(batch_size, self.opt.pos_num, 1, 1)
         pai = gama * pos_emb
         pos_emb = pai.sum(1)
