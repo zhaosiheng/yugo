@@ -42,7 +42,9 @@ class CombineGraph(Module):
         self.pos_emb = nn.Parameter(torch.Tensor(opt.pos_num, opt.pos_emb_len, self.dim))
         self.mine_w_1 = nn.Parameter(torch.Tensor(1, opt.pos_emb_len))
         self.mine_q_1 = nn.Parameter(torch.Tensor(1, opt.pos_emb_len))
-        
+        self.classifer = nn.Sequential(nn.Linear(self.dim, self.dim),
+                                       nn.LeakyReLU(opt.alpha),
+                                       nn.Linear(self.dim, opt.pos_num))
         
 
         # Parameters
