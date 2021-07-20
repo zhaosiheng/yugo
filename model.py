@@ -104,7 +104,7 @@ class CombineGraph(Module):
         pos_emb = pai.sum(1)
         
         l2 = pai.pow(2).sum(-1).sum(-1).pow(0.5).sum(1) / pos_emb.pow(2).sum(-1).sum(-1).pow(0.5)
-        pos_emb = l2 * pos_emb
+        pos_emb = l2.view(batch_size, 1, 1) * pos_emb
         
         self.gama = gama
         
