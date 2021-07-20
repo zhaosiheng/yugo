@@ -109,7 +109,7 @@ class CombineGraph(Module):
         '''(3)'''
         pos_emb = self.pos_emb[:, :len, :].unsqueeze(0).repeat(batch_size, 1, 1, 1)
         h = self.classifer(hidden).sum(-2) / len
-        gama = torch.softmax(h, 1).view(batch_size, self.opt.pos_num, 1, 1)
+        gama = torch.softmax(h * min(0.5 * pow(20 / 0.5, epoch / self.opt.E), 20), 1).view(batch_size, self.opt.pos_num, 1, 1)
         pai = gama * pos_emb
         pos_emb = pai.sum(1)
         l2 = (pai).pow(2).sum(-1).sum(-1).pow(0.5).sum(-1) / (pos_emb).pow(2).sum(-1).sum(-1).pow(0.5)
