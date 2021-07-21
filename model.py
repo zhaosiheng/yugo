@@ -110,7 +110,7 @@ class CombineGraph(Module):
         '''(3)'''
         pos_emb = self.pos_emb[:, :len, :].unsqueeze(0).repeat(batch_size, 1, 1, 1)
         h = torch.matmul(self.leakyrelu(torch.matmul(torch.cat((hs, torch.log2(mask.squeeze(-1).sum(-1).unsqueeze(-1))), -1), self.Q)), self.P)
-        gama = torch.softmax(h * min(0.2 * pow(2 / 0.2, epoch / self.opt.E), 2), 1).view(batch_size, self.opt.pos_num, 1, 1)
+        gama = torch.softmax(h * min(0.5 * pow(2 / 0.5, epoch / self.opt.E), 2), 1).view(batch_size, self.opt.pos_num, 1, 1)
         pai = gama * pos_emb
         pos_emb = pai.sum(1)
         l2 = (pai).pow(2).sum(-1).sum(-1).pow(0.5).sum(-1) / (pos_emb).pow(2).sum(-1).sum(-1).pow(0.5)
