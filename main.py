@@ -38,8 +38,10 @@ parser.add_argument('--hop', type=int, default=5)
 parser.add_argument('--long_edge_dropout', type=float, default=0.0)
 parser.add_argument('--pos_emb_len', type=int, default=200)
 parser.add_argument('--pos_num', type=int, default=10)
-parser.add_argument('--amplify_coef', type=float, default=1.0)
-parser.add_argument('--E', type=float, default=5)
+
+parser.add_argument('--E', type=float, default=4)
+parser.add_argument('--t0', type=float, default=0.3)
+parser.add_argument('--te', type=float, default=3.0)
 
 
 
