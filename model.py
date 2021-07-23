@@ -42,10 +42,12 @@ class CombineGraph(Module):
         self.pos_emb = nn.Parameter(torch.Tensor(opt.pos_num, opt.pos_emb_len, self.dim))
         self.mine_w_1 = nn.Parameter(torch.Tensor(1, opt.pos_emb_len))
         self.mine_q_1 = nn.Parameter(torch.Tensor(1, opt.pos_emb_len))
-        
+        '''
         self.Q = nn.Parameter(torch.Tensor(self.dim+1, self.dim))
         self.P = nn.Parameter(torch.Tensor(self.dim, opt.pos_num))
-
+        '''
+        self.Q_4 = nn.Parameter(torch.Tensor(self.dim * 2, self.dim))
+        self.P_4 = nn.Parameter(torch.Tensor(self.dim, 1))
         # Parameters
         self.w_1 = nn.Parameter(torch.Tensor(2 * self.dim, self.dim))
         self.w_2 = nn.Parameter(torch.Tensor(self.dim, 1))
@@ -108,6 +110,7 @@ class CombineGraph(Module):
         self.gama = gama
         '''
         '''(3)'''
+        '''
         pos_emb = self.pos_emb[:, :len, :].view(self.opt.pos_num, len * self.dim)
         
         #hz = torch.sum(self.embedding(inputs) * mask, -2) / torch.sum(mask, 1)
@@ -115,16 +118,33 @@ class CombineGraph(Module):
         h = torch.matmul(self.leakyrelu(torch.matmul(torch.cat((hs, torch.log2(mask.squeeze(-1).sum(-1).unsqueeze(-1))), -1), self.Q)), self.P)
         gama = torch.softmax(h * min(self.opt.t0 * pow(self.opt.te / self.opt.t0, epoch / self.opt.E), self.opt.te), 1)
         '''
+        '''
         pai = gama * pos_emb
         pos_emb = pai.sum(1)
         l2 = (pai).pow(2).sum(-1).sum(-1).pow(0.5).sum(-1) / (pos_emb).pow(2).sum(-1).sum(-1).pow(0.5)
         pos_emb = l2.view(batch_size, 1, 1) * pos_emb
+        '''
         '''
         mean_v = torch.matmul(gama, pos_emb)
         de_tor = torch.nn.functional.normalize(mean_v, p=2, dim=-1)
         num_tor = torch.matmul(gama, torch.norm(pos_emb, dim=-1).unsqueeze(-1))
         pos_emb = (de_tor * num_tor).view(batch_size, len, self.dim)
         self.gama = gama
+        '''
+        '''(4)'''
+        pos_emb = self.pos_emb[:, :len, :]
+
+        hz = torch.sum(self.embedding(inputs) * mask, -2) / torch.sum(mask, 1)
+        concat = torch.cat([hidden.unsqueeze(1).repeat(1,self.opt.pos_num,1,1), pos_emb.unsqueeze(0).repeat(batch_size,1,1,1)], -1).sum(-2) / len
+        h = torch.matmul(self.leakyrelu(torch.matmul(concat, self.Q_4)), self.P_4).squeeze(-1)
+        
+        gama = torch.softmax(h * min(self.opt.t0 * pow(self.opt.te / self.opt.t0, epoch / self.opt.E), self.opt.te), 1)
+
+        mean_v = torch.matmul(gama, pos_emb.view(self.opt.pos_num, len * self.dim))
+        de_tor = torch.nn.functional.normalize(mean_v, p=2, dim=-1)
+        num_tor = torch.matmul(gama, torch.norm(pos_emb.view(self.opt.pos_num, len * self.dim), dim=-1).unsqueeze(-1))
+        pos_emb = (de_tor * num_tor).view(batch_size, len, self.dim)
+        
         
         hs = hs.unsqueeze(-2).repeat(1, len, 1)
         nh = torch.matmul(torch.cat([pos_emb, hidden], -1), self.w_1)
