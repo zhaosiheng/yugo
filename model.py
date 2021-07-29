@@ -117,7 +117,7 @@ class CombineGraph(Module):
         mask = torch.zeros_like(neighbor)
         n = torch.where(num > self.opt.threshold, neighbor, mask)
         pos_sample = torch.stack(list(neighbor==i for i in all_items)).sum(-1)
-        mask = torch.eye(len(all_items)).long()
+        mask = trans_to_cuda(torch.eye(len(all_items)).long())
         pos_sample = torch.where(mask.eq(0), pos_sample, mask)
         con_loss = self.ssl(self.embedding(all_items), h_hat, pos_sample)
         # combine
