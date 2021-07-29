@@ -125,27 +125,14 @@ class CombineGraph(Module):
         output = h_local 
 
         return output, con_loss
-
-
-def SSL(sess_emb_hgnn, sess_emb_lgcn):
-    def row_shuffle(embedding):
-        corrupted_embedding = embedding[torch.randperm(embedding.size()[0])]
-        return corrupted_embedding
-
-    def row_column_shuffle(embedding):
-        corrupted_embedding = embedding[torch.randperm(embedding.size()[0])]
-        corrupted_embedding = corrupted_embedding[:, torch.randperm(corrupted_embedding.size()[1])]
-        return corrupted_embedding
-
-    def score(x1, x2):
-        return torch.sum(torch.mul(x1, x2), 1)
-
-    pos = score(sess_emb_hgnn, sess_emb_lgcn)
-    neg1 = score(sess_emb_lgcn, row_column_shuffle(sess_emb_hgnn))
-    one = torch.cuda.FloatTensor(neg1.shape[0], neg1.shape[1]).fill_(1)
-    # one = zeros = torch.ones(neg1.shape[0])
-    con_loss = torch.sum(-torch.log(1e-8 + torch.sigmoid(pos)) - torch.log(1e-8 + (one - torch.sigmoid(neg1))))
-    return con_loss
+    def ssl(self, h, h_hat, pos_matrix):
+        pos_matrix = torch.tensor(pos_matrix)
+        pos_index = (pos_matrix >= self.opt.threshold).nonzero(as_tuple=True)
+        h_mul_h_hat = torch.matmul(h, h_hat.transpose(-2, -1)).exp()
+        pos = h_mul_h_hat[pos_index].reshape(-1)
+        neg = h_mul_h_hat.reshape(-1)
+        con_loss = -1 * (torch.log(pos.sum(-1)) - torch.log(neg.sum(-1)))
+        return con_loss
 
 def trans_to_cuda(variable):
     if torch.cuda.is_available():
