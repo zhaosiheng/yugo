@@ -117,7 +117,8 @@ class CombineGraph(Module):
         mask = torch.zeros_like(neighbor)
         n = torch.where(num > self.opt.threshold, neighbor, mask)
         pos_sample = torch.stack(list(neighbor==i for i in all_items)).sum(-1)
-        pos_sample = trans_to_cuda(torch.eye(len(all_items))) + pos_sample
+        mask = torch.eye(len(all_items)).long()
+        pos_sample = torch.where(mask.eq(0), pos_sample, mask)
         con_loss = self.ssl(self.embedding(all_items), h_hat, pos_sample)
         # combine
         h_local = F.dropout(h_local, self.dropout_local, training=self.training)
@@ -125,13 +126,14 @@ class CombineGraph(Module):
         output = h_local 
 
         return output, con_loss
+
     def ssl(self, h, h_hat, pos_matrix):
-        pos_index = (pos_matrix >= self.opt.threshold).nonzero(as_tuple=True)
         h_mul_h_hat = torch.matmul(h, h_hat.transpose(-2, -1)).exp()
-        pos = h_mul_h_hat[pos_index].reshape(-1)
-        neg = h_mul_h_hat.reshape(-1)
-        con_loss = -1 * (torch.log(pos.sum(-1)) - torch.log(neg.sum(-1)))
-        return con_loss
+        h_mul_h_hat = h_mul_h_hat / h_mul_h_hat.sum(-1)
+        pos = (h_mul_h_hat * pos_matrix).sum(-1)
+
+        con_loss = -1 * torch.log(pos)
+        return con_loss.mean()
 
 def trans_to_cuda(variable):
     if torch.cuda.is_available():
