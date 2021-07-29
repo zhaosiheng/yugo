@@ -23,6 +23,7 @@ class CombineGraph(Module):
         self.sample_num = opt.n_sample
         self.adj_all = trans_to_cuda(torch.Tensor(adj_all)).long()
         self.num = trans_to_cuda(torch.Tensor(num)).float()
+        self.degree = self.num.sum(-1)
         
 
         # Aggregator
@@ -98,27 +99,26 @@ class CombineGraph(Module):
 
         # global
         all_items = torch.unique(inputs)
-        degree = self.num.sum(-1)
-        di = degree[all_items].unsqueeze(-1)
+
+        di = self.degree[all_items].unsqueeze(-1)
         zero_index = (di==0).nonzero(as_tuple=True)[0]
         for i in reversed(range(len(zero_index))):
             all_items = torch.cat([all_items[:zero_index[i]],all_items[zero_index[i]+1:]])
 
-
         neighbor = self.adj_all[all_items]
-        di = degree[all_items].unsqueeze(-1)
-        dj = degree[neighbor]
-        d = (di * dj).sqrt().reciprocal() * self.num[all_items]
+        num = self.num[all_items]
+        di = self.degree[all_items].unsqueeze(-1)
+        dj = self.degree[neighbor]
+        d = (di * dj).sqrt().reciprocal() * num
         x = self.embedding(neighbor)
         h_hat = torch.matmul(d.nan_to_num().unsqueeze(-1).transpose(-2,-1),x).squeeze(1)
-        edge_m = np.zeros((len(all_items),len(all_items)))
-        for i in range(len(all_items)):
-            for j in range(len(all_items)):
-                if all_items[j] in neighbor[i]:
-                    index = (neighbor[i]==all_items[j]).nonzero(as_tuple=True)[0]
-                    edge_m[i][j] = self.num[all_items[i]][index].item()
-        edge_m = edge_m + np.eye(len(all_items)) * self.opt.threshold#self.opt.threshold
-        con_loss = self.ssl(self.embedding(all_items), h_hat, edge_m)
+
+
+        mask = torch.zeros_like(neighbor)
+        n = torch.where(num > self.opt.threshold, neighbor, mask)
+        pos_sample = torch.stack(list(neighbor==i for i in all_items)).sum(-1)
+        pos_sample = torch.eye(len(all_items)) + pos_sample
+        con_loss = self.ssl(self.embedding(all_items), h_hat, pos_sample)
         # combine
         h_local = F.dropout(h_local, self.dropout_local, training=self.training)
         
@@ -126,7 +126,6 @@ class CombineGraph(Module):
 
         return output, con_loss
     def ssl(self, h, h_hat, pos_matrix):
-        pos_matrix = torch.tensor(pos_matrix)
         pos_index = (pos_matrix >= self.opt.threshold).nonzero(as_tuple=True)
         h_mul_h_hat = torch.matmul(h, h_hat.transpose(-2, -1)).exp()
         pos = h_mul_h_hat[pos_index].reshape(-1)
