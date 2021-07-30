@@ -24,6 +24,7 @@ class CombineGraph(Module):
         self.adj_all = trans_to_cuda(torch.Tensor(adj_all)).long()
         self.num = trans_to_cuda(torch.Tensor(num)).float()
         self.degree = self.num.sum(-1)
+        self.epoch = 0
         
 
         # Aggregator
@@ -174,7 +175,7 @@ def train_test(model, train_data, test_data):
         model.optimizer.zero_grad()
         targets, scores, con_loss = forward(model, data)
         targets = trans_to_cuda(targets).long()
-        loss = model.loss_function(scores, targets - 1) + model.opt.lambda_coef * con_loss
+        loss = model.loss_function(scores, targets - 1) + model.opt.lambda_coef * con_loss * (5-model.epch)
         loss.backward()
         model.optimizer.step()
         total_loss += loss
