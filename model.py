@@ -107,19 +107,20 @@ class CombineGraph(Module):
 
         neighbor = self.adj_all[all_items]
         num = self.num[all_items]
-        di = self.degree[all_items].unsqueeze(-1)
-        dj = self.degree[neighbor]
+        di = self.degree[all_items].unsqueeze(-1) +1
+        dj = self.degree[neighbor] +1
         d = (di * dj).sqrt().reciprocal() * num
-        x = self.embedding(neighbor)
-        h_hat = torch.matmul(d.nan_to_num().unsqueeze(-1).transpose(-2,-1),x).squeeze(1)
+        vj = self.embedding(neighbor)
+        vi = self.embedding(all_items)
+        h_hat = torch.matmul(d.nan_to_num().unsqueeze(-1).transpose(-2,-1),vj).squeeze(1) + di.reciprocal() * vi
 
 
         mask = torch.zeros_like(neighbor)
         n = torch.where(num > self.opt.threshold, neighbor, mask)
         pos_sample = torch.stack(list(n==i for i in all_items)).sum(-1)
-        mask = trans_to_cuda(torch.eye(len(all_items)).long())
+        mask = torch.eye(len(all_items)).long()
         pos_sample = torch.where(mask.eq(0), pos_sample, mask)
-        con_loss = self.ssl(self.embedding(all_items), h_hat, pos_sample)
+        con_loss = self.ssl(vi, h_hat, pos_sample)
         # combine
         h_local = F.dropout(h_local, self.dropout_local, training=self.training)
         
