@@ -95,7 +95,7 @@ class CombineGraph(Module):
         pos_emb = pos_emb[:,:len,:]
         self.gama = gama
         '''
-        '''(2)'''
+        '''(2)
         pos_emb = self.pos_emb[:, :len, :].unsqueeze(0).repeat(batch_size, 1, 1, 1)
 
         h = hidden.unsqueeze(1).repeat(1, self.opt.pos_num, 1, 1)
@@ -110,7 +110,7 @@ class CombineGraph(Module):
         num_tor = torch.matmul(gama, torch.norm(pos_emb.view(self.opt.pos_num, len * self.dim), dim=-1).unsqueeze(-1))
         pos_emb = (de_tor * num_tor).view(batch_size, len, self.dim)
         self.gama = gama
-
+'''
         
         '''(3)'''
         '''
@@ -134,7 +134,7 @@ class CombineGraph(Module):
         pos_emb = (de_tor * num_tor).view(batch_size, len, self.dim)
         self.gama = gama
         '''
-        '''(4)
+        '''(4)'''
         pos_emb = self.pos_emb[:, :len, :]
 
         hz = torch.sum(self.embedding(inputs) * mask, -2) / torch.sum(mask, 1)
@@ -150,7 +150,7 @@ class CombineGraph(Module):
         pos_emb = (de_tor * num_tor).view(batch_size, len, self.dim)
         
         self.gama = gama
-        '''
+        
         hs = hs.unsqueeze(-2).repeat(1, len, 1)
         nh = torch.matmul(torch.cat([pos_emb, hidden], -1), self.w_1)
         nh = torch.tanh(nh)
