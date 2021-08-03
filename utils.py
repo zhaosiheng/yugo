@@ -43,8 +43,7 @@ def handle_adj(adj_dict, n_entity, sample_num, num_dict=None):
         if n_neighbor >= sample_num:
             sampled_indices = np.random.choice(list(range(n_neighbor)), size=sample_num, replace=False)
         else:
-            sampled_indices = np.random.choice(list(range(sample_num)), size=sample_num, replace=True)
-            
+            sampled_indices = np.random.choice(list(range(n_neighbor)), size=sample_num, replace=True)
         adj_entity[entity] = np.array([neighbor[i] for i in sampled_indices])
         num_entity[entity] = np.array([neighbor_weight[i] for i in sampled_indices])
 
