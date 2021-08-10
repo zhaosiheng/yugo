@@ -77,8 +77,8 @@ class GlobalAggregator(nn.Module):
         self.bias = nn.Parameter(torch.Tensor(self.dim))
         self.leakyrelu = nn.LeakyReLU(0.2)
 
-        self.w_list = torch.nn.ParameterList([nn.Parameter(torch.Tensor(self.dim + 1, self.dim)) for i in range(6)])
-        self.q_list = torch.nn.ParameterList([nn.Parameter(torch.Tensor(self.dim, 1)) for i in range(6)])
+        #self.w_list = torch.nn.ParameterList([nn.Parameter(torch.Tensor(self.dim + 1, self.dim)) for i in range(6)])
+        self.q_list = torch.nn.ParameterList([nn.Parameter(torch.Tensor(self.dim+1, 1)) for i in range(6)])
 
     def forward(self, self_vectors, neighbor_vector, batch_size, masks, neighbor_weight, extra_vector=None):
         if extra_vector is not None:
@@ -91,8 +91,7 @@ class GlobalAggregator(nn.Module):
             t0 = time.time()
             e_list = []
             for i in range(6):
-                tmp = self.leakyrelu(torch.matmul(e, self.w_list[i]))
-                tmp = torch.matmul(tmp, self.q_list[i]).squeeze(-1)
+                tmp = self.leakyrelu(torch.matmul(e, self.q_list[i])).squeeze(-1)
                 e_list.append(tmp)
 
 
