@@ -29,7 +29,7 @@ parser.add_argument('--l2', type=float, default=1e-5, help='l2 penalty ')
 parser.add_argument('--n_iter', type=int, default=1)                                    # [1, 2]
 parser.add_argument('--dropout_gcn', type=float, default=0, help='Dropout rate.')       # [0, 0.2, 0.4, 0.6, 0.8]
 parser.add_argument('--dropout_local', type=float, default=0, help='Dropout rate.')     # [0, 0.5]
-parser.add_argument('--dropout_global', type=float, default=0.5, help='Dropout rate.')
+parser.add_argument('--dropout_global', type=float, default=0.0, help='Dropout rate.')
 parser.add_argument('--validation', action='store_true', help='validation')
 parser.add_argument('--valid_portion', type=float, default=0.1, help='split the portion')
 parser.add_argument('--alpha', type=float, default=0.2, help='Alpha for the leaky_relu.')
@@ -50,7 +50,7 @@ def main():
     if opt.dataset == 'diginetica':
         num_node = 43098
         opt.n_iter = 1
-        opt.dropout_gcn = 0.2
+        opt.dropout_gcn = 0.0
         opt.dropout_local = 0.0
     elif opt.dataset == 'Nowplaying':
         num_node = 60417
@@ -60,7 +60,7 @@ def main():
     elif opt.dataset == 'Tmall':
         num_node = 40728
         opt.n_iter = 1
-        opt.dropout_gcn = 0.6
+        opt.dropout_gcn = 0.0
         #opt.dropout_local = 0.5
         opt.dropout_local = 0.0
     else:
