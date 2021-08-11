@@ -1,3 +1,277 @@
+para:###dropout_gcn=0.1, dropout_global=0.5###
+Namespace(activate='relu', alpha=0.2, batch_size=100, dataset='diginetica', dropout_gcn=0.1, dropout_global=0.5, dropout_local=0.0, epoch=20, hiddenSize=100, hop=2, l2=1e-05, lambda_coef=1.0, long_edge_dropout=0.0, lr=0.001, lr_dc=0.1, lr_dc_step=3, n_iter=1, n_sample=12, n_sample_all=12, patience=3, threshold=2, valid_portion=0.1, validation=False)
+-------------------------------------------------------
+epoch:  0
+start training:  2021-08-11 08:07:16.434712
+/usr/local/lib/python3.7/dist-packages/torch/utils/data/dataloader.py:481: UserWarning: This DataLoader will create 4 worker processes in total. Our suggested max number of worker in current system is 2, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  cpuset_checked))
+100% 7195/7195 [07:58<00:00, 15.03it/s]
+	Loss:	52963.363
+start predicting:  2021-08-11 08:15:15.299644
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+Current Result:
+	Recall@20:	47.4071	MMR@20:	15.7418	Recall@10:	34.6314	MMR@10:	14.8623
+Best Result:
+	Recall@20:	47.4071	MMR@20:	15.7418	Recall@10:	34.6314	MMR@10:	14.8623	Epoch:	0,	0,	0,	0
+-------------------------------------------------------
+epoch:  1
+start training:  2021-08-11 08:15:42.650138
+  0% 0/7195 [00:00<?, ?it/s][W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+100% 7195/7195 [08:05<00:00, 14.83it/s]
+	Loss:	44795.484
+start predicting:  2021-08-11 08:23:47.867615
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+Current Result:
+	Recall@20:	48.8859	MMR@20:	16.0812	Recall@10:	35.8507	MMR@10:	15.1769
+Best Result:
+	Recall@20:	48.8859	MMR@20:	16.0812	Recall@10:	35.8507	MMR@10:	15.1769	Epoch:	1,	1,	1,	1
+-------------------------------------------------------
+epoch:  2
+start training:  2021-08-11 08:24:15.722904
+  0% 0/7195 [00:00<?, ?it/s][W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+100% 7195/7195 [08:09<00:00, 14.70it/s]
+	Loss:	43564.500
+start predicting:  2021-08-11 08:32:25.059932
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+Current Result:
+	Recall@20:	49.4923	MMR@20:	16.7081	Recall@10:	36.5063	MMR@10:	15.8103
+Best Result:
+	Recall@20:	49.4923	MMR@20:	16.7081	Recall@10:	36.5063	MMR@10:	15.8103	Epoch:	2,	2,	2,	2
+-------------------------------------------------------
+epoch:  3
+start training:  2021-08-11 08:32:52.784116
+  0% 0/7195 [00:00<?, ?it/s][W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+100% 7195/7195 [08:11<00:00, 14.65it/s]
+	Loss:	39585.820
+start predicting:  2021-08-11 08:41:03.938436
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+Current Result:
+	Recall@20:	52.8986	MMR@20:	18.6504	Recall@10:	39.7893	MMR@10:	17.7415
+Best Result:
+	Recall@20:	52.8986	MMR@20:	18.6504	Recall@10:	39.7893	MMR@10:	17.7415	Epoch:	3,	3,	3,	3
+-------------------------------------------------------
+epoch:  4
+start training:  2021-08-11 08:41:32.412358
+  0% 0/7195 [00:00<?, ?it/s][W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+100% 7195/7195 [08:03<00:00, 14.87it/s]
+	Loss:	38746.906
+start predicting:  2021-08-11 08:49:36.322804
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+Current Result:
+	Recall@20:	53.2190	MMR@20:	18.7649	Recall@10:	40.1361	MMR@10:	17.8588
+Best Result:
+	Recall@20:	53.2190	MMR@20:	18.7649	Recall@10:	40.1361	MMR@10:	17.8588	Epoch:	4,	4,	4,	4
+-------------------------------------------------------
+epoch:  5
+start training:  2021-08-11 08:50:03.525820
+  0% 0/7195 [00:00<?, ?it/s][W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+100% 7195/7195 [08:04<00:00, 14.84it/s]
+	Loss:	38444.883
+start predicting:  2021-08-11 08:58:08.263894
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+Current Result:
+	Recall@20:	53.4046	MMR@20:	18.8330	Recall@10:	40.3037	MMR@10:	17.9269
+Best Result:
+	Recall@20:	53.4046	MMR@20:	18.8330	Recall@10:	40.3037	MMR@10:	17.9269	Epoch:	5,	5,	5,	5
+-------------------------------------------------------
+epoch:  6
+start training:  2021-08-11 08:58:36.094766
+  0% 0/7195 [00:00<?, ?it/s][W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+100% 7195/7195 [08:04<00:00, 14.86it/s]
+	Loss:	37725.340
+start predicting:  2021-08-11 09:06:40.347647
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+Current Result:
+	Recall@20:	53.4605	MMR@20:	18.9572	Recall@10:	40.4170	MMR@10:	18.0537
+Best Result:
+	Recall@20:	53.4605	MMR@20:	18.9572	Recall@10:	40.4170	MMR@10:	18.0537	Epoch:	6,	6,	6,	6
+-------------------------------------------------------
+epoch:  7
+start training:  2021-08-11 09:07:08.067658
+  0% 0/7195 [00:00<?, ?it/s][W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+100% 7195/7195 [08:04<00:00, 14.84it/s]
+	Loss:	37657.695
+start predicting:  2021-08-11 09:15:12.825956
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+Current Result:
+	Recall@20:	53.4704	MMR@20:	18.9759	Recall@10:	40.5107	MMR@10:	18.0789
+Best Result:
+	Recall@20:	53.4704	MMR@20:	18.9759	Recall@10:	40.5107	MMR@10:	18.0789	Epoch:	7,	7,	7,	7
+-------------------------------------------------------
+epoch:  8
+start training:  2021-08-11 09:15:40.370380
+  0% 0/7195 [00:00<?, ?it/s][W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+100% 7195/7195 [08:04<00:00, 14.84it/s]
+	Loss:	37624.703
+start predicting:  2021-08-11 09:23:45.188731
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+Current Result:
+	Recall@20:	53.5328	MMR@20:	18.9925	Recall@10:	40.5238	MMR@10:	18.0912
+Best Result:
+	Recall@20:	53.5328	MMR@20:	18.9925	Recall@10:	40.5238	MMR@10:	18.0912	Epoch:	8,	8,	8,	8
+-------------------------------------------------------
+epoch:  9
+start training:  2021-08-11 09:24:12.788670
+  0% 0/7195 [00:00<?, ?it/s][W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+100% 7195/7195 [08:06<00:00, 14.79it/s]
+	Loss:	37524.984
+start predicting:  2021-08-11 09:32:19.106388
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+Current Result:
+	Recall@20:	53.5312	MMR@20:	18.9945	Recall@10:	40.5271	MMR@10:	18.0935
+Best Result:
+	Recall@20:	53.5328	MMR@20:	18.9945	Recall@10:	40.5271	MMR@10:	18.0935	Epoch:	8,	9,	9,	9
+-------------------------------------------------------
+epoch:  10
+start training:  2021-08-11 09:32:46.850006
+  0% 0/7195 [00:00<?, ?it/s][W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+100% 7195/7195 [08:04<00:00, 14.85it/s]
+	Loss:	37521.199
+start predicting:  2021-08-11 09:40:51.371388
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+Current Result:
+	Recall@20:	53.5246	MMR@20:	18.9936	Recall@10:	40.5370	MMR@10:	18.0938
+Best Result:
+	Recall@20:	53.5328	MMR@20:	18.9945	Recall@10:	40.5370	MMR@10:	18.0938	Epoch:	8,	9,	10,	10
+-------------------------------------------------------
+epoch:  11
+start training:  2021-08-11 09:41:20.115992
+  0% 0/7195 [00:00<?, ?it/s][W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+100% 7195/7195 [08:05<00:00, 14.82it/s]
+	Loss:	37518.336
+start predicting:  2021-08-11 09:49:25.769251
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+Current Result:
+	Recall@20:	53.5328	MMR@20:	18.9991	Recall@10:	40.5321	MMR@10:	18.0982
+Best Result:
+	Recall@20:	53.5328	MMR@20:	18.9991	Recall@10:	40.5370	MMR@10:	18.0982	Epoch:	11,	11,	10,	11
+-------------------------------------------------------
+epoch:  12
+start training:  2021-08-11 09:49:53.370156
+  0% 0/7195 [00:00<?, ?it/s][W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+100% 7195/7195 [08:03<00:00, 14.87it/s]
+	Loss:	37514.301
+start predicting:  2021-08-11 09:57:57.308235
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+Current Result:
+	Recall@20:	53.5328	MMR@20:	18.9975	Recall@10:	40.5321	MMR@10:	18.0966
+Best Result:
+	Recall@20:	53.5328	MMR@20:	18.9991	Recall@10:	40.5370	MMR@10:	18.0982	Epoch:	12,	11,	10,	11
+-------------------------------------------------------
+epoch:  13
+start training:  2021-08-11 09:58:25.893505
+  0% 0/7195 [00:00<?, ?it/s][W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+100% 7195/7195 [08:04<00:00, 14.86it/s]
+	Loss:	37509.859
+start predicting:  2021-08-11 10:06:30.006191
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+Current Result:
+	Recall@20:	53.5361	MMR@20:	18.9992	Recall@10:	40.5337	MMR@10:	18.0983
+Best Result:
+	Recall@20:	53.5361	MMR@20:	18.9992	Recall@10:	40.5370	MMR@10:	18.0983	Epoch:	13,	13,	10,	13
+-------------------------------------------------------
+epoch:  14
+start training:  2021-08-11 10:06:57.869213
+  0% 0/7195 [00:00<?, ?it/s][W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+[W pthreadpool-cpp.cc:90] Warning: Leaking Caffe2 thread-pool after fork. (function pthreadpool)
+  1% 104/7195 [00:07<08:48, 13.41it/s]
+Traceback (most recent call last):
+  File "main.py", line 130, in <module>
+    main()
+  File "main.py", line 97, in main
+    hit, mrr, hit_alias, mrr_alias = train_test(model, train_data, test_data)
+  File "/content/GCE-GNN/GCE-GNN/GCE-GNN/GCE-GNN/model.py", line 193, in train_test
+    loss.backward()
+  File "/usr/local/lib/python3.7/dist-packages/torch/_tensor.py", line 255, in backward
+    torch.autograd.backward(self, gradient, retain_graph, create_graph, inputs=inputs)
+  File "/usr/local/lib/python3.7/dist-packages/torch/autograd/__init__.py", line 149, in backward
+    allow_unreachable=True, accumulate_grad=True)  # allow_unreachable flag
+KeyboardInterrupt
+
+
 para:####dropout_gcn=0.4, dropout_global=0.5####,1-iter
 Namespace(activate='relu', alpha=0.2, batch_size=100, dataset='diginetica', dropout_gcn=0.4, dropout_global=0.5, dropout_local=0.0, epoch=20, hiddenSize=100, hop=2, l2=1e-05, lambda_coef=1.0, long_edge_dropout=0.0, lr=0.001, lr_dc=0.1, lr_dc_step=3, n_iter=1, n_sample=12, n_sample_all=12, patience=3, threshold=2, valid_portion=0.1, validation=False)
 -------------------------------------------------------
