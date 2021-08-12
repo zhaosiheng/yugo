@@ -85,7 +85,7 @@ class GlobalAggregator(nn.Module):
             #alpha = torch.matmul(torch.cat([extra_vector.unsqueeze(2).repeat(1, 1, neighbor_vector.shape[2], 1)*neighbor_vector, neighbor_weight.unsqueeze(-1)], -1), self.w_1).squeeze(-1)
             #alpha = torch.matmul(extra_vector.unsqueeze(2).repeat(1, 1, neighbor_vector.shape[2], 1)*neighbor_vector, self.w_1).squeeze(-1)
 
-            e = extra_vector.unsqueeze(2).repeat(1, 1, neighbor_vector.shape[2], 1) * neighbor_vector
+            e = self_vectors.unsqueeze(2).repeat(1, 1, neighbor_vector.shape[2], 1) * neighbor_vector
             e = torch.cat([e, neighbor_weight.unsqueeze(-1)], -1)
 
             t0 = time.time()
@@ -140,7 +140,7 @@ class GlobalAggregator(nn.Module):
             '''
 
 
-            beta = torch.nn.functional.linear(h0, self.w_sc, self.bias)
+            beta = torch.nn.functional.linear(h0 * extra_vector.unsqueeze(-2).repeat(1,1,6,1), self.w_sc, self.bias)
             beta = torch.tanh(beta)
             beta = torch.matmul(beta, self.a_sc)
             mask = -9e15 * torch.ones_like(beta)
