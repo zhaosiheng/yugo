@@ -116,8 +116,8 @@ class GlobalAggregator(nn.Module):
             h0 = torch.stack(h0_list, -2)
 
 
-            beta = torch.nn.functional.linear(h0 * extra_vector.unsqueeze(-2).repeat(1,1,self.exp,1), self.w_sc, self.bias)
-            beta = torch.tanh(beta)
+            beta = torch.matmul(h0 * extra_vector.unsqueeze(-2).repeat(1,1,self.exp,1), self.w_sc)
+            beta = self.leakyrelu(beta)
             beta = torch.matmul(beta, self.a_sc)
             mask = -9e15 * torch.ones_like(beta)
             beta = torch.where(h0.sum(-1).unsqueeze(-1) == 0, mask, beta).squeeze(-1)
