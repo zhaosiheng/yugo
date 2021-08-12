@@ -64,12 +64,15 @@ class LocalAggregator(nn.Module):
 
 
 class GlobalAggregator(nn.Module):
-    def __init__(self, dim, dropout, act=torch.relu, name=None):
+    def __init__(self, dim, dropout, act=torch.relu, base = 4, exp = 6,name=None):
         super(GlobalAggregator, self).__init__()
         self.dropout = dropout
         self.act = act
         self.dim = dim
-
+        
+        self.base = base
+        self.exp = exp
+        
         #self.w_1 = nn.Parameter(torch.Tensor(self.dim, self.dim))
         self.w_sc = nn.Parameter(torch.Tensor(self.dim, self.dim))
         self.a_sc = nn.Parameter(torch.Tensor(self.dim, 1))
@@ -78,7 +81,7 @@ class GlobalAggregator(nn.Module):
         self.leakyrelu = nn.LeakyReLU(0.2)
 
         #self.w_list = torch.nn.ParameterList([nn.Parameter(torch.Tensor(self.dim + 1, self.dim)) for i in range(6)])
-        self.q_list = torch.nn.ParameterList([nn.Parameter(torch.Tensor(self.dim+1, 1)) for i in range(6)])
+        self.q_list = torch.nn.ParameterList([nn.Parameter(torch.Tensor(self.dim+1, 1)) for i in range(self.exp)])
 
     def forward(self, self_vectors, neighbor_vector, batch_size, masks, neighbor_weight, extra_vector=None):
         if extra_vector is not None:
@@ -90,7 +93,7 @@ class GlobalAggregator(nn.Module):
 
             t0 = time.time()
             e_list = []
-            for i in range(6):
+            for i in range(self.exp):
                 tmp = self.leakyrelu(torch.matmul(e, self.q_list[i])).squeeze(-1)
                 e_list.append(tmp)
 
@@ -98,8 +101,11 @@ class GlobalAggregator(nn.Module):
             h0_list = []
             a_list = []
             mask = -9e15 * torch.ones_like(e_list[0])
-            for i in range(6):
-                alpha = torch.where(torch.logical_and(neighbor_weight >= pow(4,i), neighbor_weight < pow(4,i+1)), e_list[i], mask)
+            for i in range(self.exp):
+                if i < 7:
+                    alpha = torch.where(torch.logical_and(neighbor_weight >= pow(self.base,i), neighbor_weight < pow(self.base,i+1)), e_list[i], mask)
+                else:
+                    alpha = torch.where(neighbor_weight >= pow(self.base, i), e_list[i], mask)
                 alpha = torch.softmax(alpha, -1)
                 padding = alpha[0][0][0]
                 zero = torch.zeros_like(alpha)
@@ -109,38 +115,8 @@ class GlobalAggregator(nn.Module):
 
             h0 = torch.stack(h0_list, -2)
 
-            '''
-            h1_list = []
-            for i in range(6):
-                beta = torch.nn.functional.linear(h0_list[i], self.w_sc, self.bias)
-                
-                zero = torch.zeros_like(beta)
-                beta = torch.where(h0_list[i] == 0, zero, beta)
-                
-                beta = torch.tanh(beta)
-                beta = torch.matmul(beta, self.a_sc)
-                padding = h0_list[0][0][0][0]
-                zero = torch.zeros_like(beta)
-                beta = torch.where(h0_list[i].sum(-1).unsqueeze(-1) == padding, zero, beta)
-                h1_list.append(beta)
-            '''
 
-
-
-            '''
-            for i in range(6):
-                alpha = torch.where(torch.logical_and(neighbor_weight >= pow(4,i), neighbor_weight < pow(4,i+1)), e_list[i], mask)
-                a_list.append(alpha)
-            alpha = torch.stack(a_list, -2)
-            alpha = torch.softmax(alpha, -1)
-            padding = alpha[0][0]
-            zero = torch.zeros_like(alpha)
-            alpha = torch.where(alpha == padding, zero, alpha)
-            tmp = (alpha.unsqueeze(-1) * neighbor_vector.unsqueeze(-3).repeat(1,1,6,1,1)).sum(-2)
-            '''
-
-
-            beta = torch.nn.functional.linear(h0 * extra_vector.unsqueeze(-2).repeat(1,1,6,1), self.w_sc, self.bias)
+            beta = torch.nn.functional.linear(h0 * extra_vector.unsqueeze(-2).repeat(1,1,self.exp,1), self.w_sc, self.bias)
             beta = torch.tanh(beta)
             beta = torch.matmul(beta, self.a_sc)
             mask = -9e15 * torch.ones_like(beta)
