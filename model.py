@@ -32,7 +32,7 @@ class CombineGraph(Module):
         self.global_agg = []
         for i in range(self.hop):
             if opt.activate == 'relu':
-                agg = GlobalAggregator(self.dim, opt.dropout_gcn, act=torch.relu, base=opt.base, exp=opt.exp, base=opt.base, exp=opt.exp)
+                agg = GlobalAggregator(self.dim, opt.dropout_gcn, act=torch.relu, base=opt.base, exp=opt.exp)
             else:
                 agg = GlobalAggregator(self.dim, opt.dropout_gcn, act=torch.tanh, base=opt.base, exp=opt.exp)
             self.add_module('agg_gcn_{}'.format(i), agg)
