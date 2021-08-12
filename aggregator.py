@@ -102,7 +102,7 @@ class GlobalAggregator(nn.Module):
             a_list = []
             mask = -9e15 * torch.ones_like(e_list[0])
             for i in range(self.exp):
-                if i < 7:
+                if i < self.exp-1:
                     alpha = torch.where(torch.logical_and(neighbor_weight >= pow(self.base,i), neighbor_weight < pow(self.base,i+1)), e_list[i], mask)
                 else:
                     alpha = torch.where(neighbor_weight >= pow(self.base, i), e_list[i], mask)
