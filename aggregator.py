@@ -89,7 +89,7 @@ class GlobalAggregator(nn.Module):
             #alpha = torch.matmul(extra_vector.unsqueeze(2).repeat(1, 1, neighbor_vector.shape[2], 1)*neighbor_vector, self.w_1).squeeze(-1)
 
             e = self_vectors.unsqueeze(2).repeat(1, 1, neighbor_vector.shape[2], 1) * neighbor_vector
-            e = torch.cat([e, neighbor_weight.unsqueeze(-1)], -1)
+            e = torch.cat([e, neighbor_weight.log2().nan_to_num().unsqueeze(-1)], -1)
 
             t0 = time.time()
             e_list = []
