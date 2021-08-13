@@ -115,7 +115,7 @@ class GlobalAggregator(nn.Module):
 
             h0 = torch.stack(h0_list, -2)
 
-            len = torch.tensor([pow(self.base, i+1) for i in range(self.exp)]).view(1,1,-1,1).repeat(h0.shape[0],h0.shape[1],1,1)
+            len = torch.tensor([pow(self.base, i+1) for i in range(self.exp)]).view(1,1,-1,1).repeat(h0.shape[0],h0.shape[1],1,1).cuda()
             beta = torch.matmul(torch.cat([h0 * extra_vector.unsqueeze(-2).repeat(1, 1, self.exp, 1), len], -1), self.w_sc)
             beta = self.leakyrelu(beta)
             beta = torch.matmul(beta, self.a_sc)
