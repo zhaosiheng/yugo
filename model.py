@@ -49,8 +49,7 @@ class CombineGraph(Module):
         self.Q_4 = nn.Parameter(torch.Tensor(self.dim * 2 + 1, self.dim))
         self.P_4 = nn.Parameter(torch.Tensor(self.dim, 1))
         # Parameters
-        #self.w_1 = nn.Parameter(torch.Tensor(2 * self.dim, self.dim))
-        self.w_1 = nn.Parameter(torch.Tensor(1*self.dim, self.dim))
+        self.w_1 = nn.Parameter(torch.Tensor(2 * self.dim, self.dim))
         self.w_2 = nn.Parameter(torch.Tensor(self.dim, 1))
         self.glu1 = nn.Linear(self.dim, self.dim)
         self.glu2 = nn.Linear(self.dim, self.dim, bias=False)
@@ -153,8 +152,7 @@ class CombineGraph(Module):
         self.gama = gama
         
         hs = hs.unsqueeze(-2).repeat(1, len, 1)
-        #nh = torch.matmul(torch.cat([pos_emb, hidden], -1), self.w_1)
-        nh = torch.matmul(pos_emb+hidden, self.w_1)
+        nh = torch.matmul(torch.cat([pos_emb, hidden], -1), self.w_1)
         nh = torch.tanh(nh)
         nh = torch.sigmoid(self.glu1(nh) + self.glu2(hs))
         beta = torch.matmul(nh, self.w_2)
