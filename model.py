@@ -69,7 +69,7 @@ class CombineGraph(Module):
         # return self.adj_all[target.view(-1)][:, index], self.num[target.view(-1)][:, index]
         return self.adj_all[target.view(-1)], self.num[target.view(-1)]
 
-    def compute_scores(self, hidden, mask):
+    def compute_scores(self, hidden, mask, s_global):
         mask = mask.float().unsqueeze(-1)
 
         batch_size = hidden.shape[0]
@@ -77,7 +77,7 @@ class CombineGraph(Module):
         pos_emb = self.pos_embedding.weight[:len]
         pos_emb = pos_emb.unsqueeze(0).repeat(batch_size, 1, 1)
 
-        hs = torch.sum(hidden * mask, -2) / torch.sum(mask, 1)
+        hs = torch.sum(hidden * mask, -2) / torch.sum(mask, 1) +s_global
         hs = hs.unsqueeze(-2).repeat(1, len, 1)
         nh = torch.matmul(torch.cat([pos_emb, hidden], -1), self.w_1)
         nh = torch.tanh(nh)
@@ -121,9 +121,10 @@ class CombineGraph(Module):
         # sum
         # sum_item_emb = torch.sum(item_emb, 1)
         
-        sum_item_emb = sum_item_emb.unsqueeze(-2)
+        sum_item_emb = sum_item_emb
         for i in range(self.hop):
-            session_info.append(sum_item_emb.repeat(1, entity_vectors[i].shape[1], 1))
+            #session_info.append(sum_item_emb.repeat(1, entity_vectors[i].shape[1], 1))
+            session_info.append(sum_item_emb)
 
         for n_hop in range(self.hop):
             entity_vectors_next_iter = []
@@ -143,12 +144,10 @@ class CombineGraph(Module):
 
         # combine
         h_local = F.dropout(h_local, self.dropout_local, training=self.training)
-        h_global = F.dropout(h_global, self.dropout_global, training=self.training)
-        output = h_local + h_global
-        
+        s_global = F.dropout(h_global, self.dropout_global, training=self.training)
+        output = h_local 
 
-
-        return output
+        return output, s_global
 
 
 def trans_to_cuda(variable):
@@ -173,10 +172,10 @@ def forward(model, data):
     mask = trans_to_cuda(mask).long()
     inputs = trans_to_cuda(inputs).long()
 
-    hidden = model(items, adj, mask, inputs)
+    hidden, s_global = model(items, adj, mask, inputs)
     get = lambda index: hidden[index][alias_inputs[index]]
     seq_hidden = torch.stack([get(i) for i in torch.arange(len(alias_inputs)).long()])
-    return targets, model.compute_scores(seq_hidden, mask)
+    return targets, model.compute_scores(seq_hidden, mask, s_global)
 
 
 def train_test(model, train_data, test_data):
