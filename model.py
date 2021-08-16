@@ -140,11 +140,11 @@ class CombineGraph(Module):
                 entity_vectors_next_iter.append(vector)
             entity_vectors = entity_vectors_next_iter
 
-        h_global = entity_vectors[0].view(batch_size, seqs_len, self.dim)
+        s_global = entity_vectors[0]
 
         # combine
         h_local = F.dropout(h_local, self.dropout_local, training=self.training)
-        s_global = F.dropout(h_global, self.dropout_global, training=self.training)
+        s_global = F.dropout(s_global, self.dropout_global, training=self.training)
         output = h_local 
 
         return output, s_global
