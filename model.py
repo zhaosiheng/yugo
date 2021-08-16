@@ -77,7 +77,7 @@ class CombineGraph(Module):
         pos_emb = self.pos_embedding.weight[:len]
         pos_emb = pos_emb.unsqueeze(0).repeat(batch_size, 1, 1)
 
-        hs = torch.sum(hidden * mask, -2) / torch.sum(mask, 1) +s_global
+        hs = torch.sum(hidden * mask, -2) / torch.sum(mask, 1)
         hs = hs.unsqueeze(-2).repeat(1, len, 1)
         nh = torch.matmul(torch.cat([pos_emb, hidden], -1), self.w_1)
         nh = torch.tanh(nh)
@@ -145,7 +145,7 @@ class CombineGraph(Module):
         # combine
         h_local = F.dropout(h_local, self.dropout_local, training=self.training)
         s_global = F.dropout(s_global, self.dropout_global, training=self.training)
-        output = h_local 
+        output = h_local + s_global.unsqueeze(-2).repeat(1,h_local.shape[1],1)
 
         return output, s_global
 
