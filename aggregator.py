@@ -64,24 +64,17 @@ class LocalAggregator(nn.Module):
 
 
 class GlobalAggregator(nn.Module):
-    def __init__(self, dim, dropout, act=torch.relu, base = 4, exp = 6,name=None):
+    def __init__(self, dim, dropout, act=torch.relu, name=None):
         super(GlobalAggregator, self).__init__()
         self.dropout = dropout
         self.act = act
         self.dim = dim
-        
-        self.base = base
-        self.exp = exp
-        
-        #self.w_1 = nn.Parameter(torch.Tensor(self.dim, self.dim))
-        self.w_sc = nn.Parameter(torch.Tensor(self.dim+1, self.dim))
-        self.a_sc = nn.Parameter(torch.Tensor(self.dim, 1))
+
+        #self.w_1 = nn.Parameter(torch.Tensor(self.dim + 1, self.dim))
+        self.w_1 = nn.Parameter(torch.Tensor(self.dim, self.dim))
+        self.w_2 = nn.Parameter(torch.Tensor(self.dim, 1))
         self.w_3 = nn.Parameter(torch.Tensor(2 * self.dim, self.dim))
         self.bias = nn.Parameter(torch.Tensor(self.dim))
-        self.leakyrelu = nn.LeakyReLU(0.2)
-
-        #self.w_list = torch.nn.ParameterList([nn.Parameter(torch.Tensor(self.dim + 1, self.dim)) for i in range(6)])
-        self.q_list = torch.nn.ParameterList([nn.Parameter(torch.Tensor(self.dim, 1)) for i in range(self.exp)])
 
     def forward(self, self_vectors, neighbor_vector, batch_size, masks, neighbor_weight, extra_vector=None):
         if extra_vector is not None:
