@@ -136,7 +136,8 @@ class CombineGraph(Module):
                                     masks=None,
                                     batch_size=batch_size,
                                     neighbor_weight=weight_vectors[hop].view(batch_size, -1, self.sample_num),
-                                    extra_vector=session_info[hop])
+                                    extra_vector=session_info[hop],
+                                    t = self.opt.t)
                 entity_vectors_next_iter.append(vector)
             entity_vectors = entity_vectors_next_iter
 
