@@ -76,7 +76,7 @@ class GlobalAggregator(nn.Module):
         self.w_3 = nn.Parameter(torch.Tensor(2 * self.dim, self.dim))
         self.bias = nn.Parameter(torch.Tensor(self.dim))
 
-    def forward(self, self_vectors, neighbor_vector, batch_size, masks, neighbor_weight, extra_vector=None):
+    def forward(self, self_vectors, neighbor_vector, batch_size, masks, neighbor_weight, extra_vector=None, t=1.0):
         if extra_vector is not None:
             batch_size = neighbor_vector.shape[0]
             neighbor_vector = neighbor_vector.view(batch_size, -1, self.dim)
@@ -84,7 +84,7 @@ class GlobalAggregator(nn.Module):
 
             alpha = torch.matmul(extra_vector.unsqueeze(-2).repeat(1, neighbor_vector.shape[1], 1)*neighbor_vector, self.w_1)
             alpha = F.leaky_relu(alpha, negative_slope=0.2)
-            alpha = torch.matmul(alpha, self.w_2).squeeze(-1)
+            alpha = torch.matmul(alpha, self.w_2).squeeze(-1) * t
             alpha = torch.softmax(alpha, -1).unsqueeze(-1)
             neighbor_vector = torch.sum(alpha * neighbor_vector, dim=-2)
         else:
