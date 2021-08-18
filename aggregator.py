@@ -85,6 +85,8 @@ class GlobalAggregator(nn.Module):
             alpha = torch.matmul(extra_vector.unsqueeze(-2).repeat(1, neighbor_vector.shape[1], 1)*neighbor_vector, self.w_1)
             alpha = F.leaky_relu(alpha, negative_slope=0.2)
             alpha = torch.matmul(alpha, self.w_2).squeeze(-1) * t
+            mask = -9e15 * torch.ones_like(alpha)
+            alpha = torch.where(neighbor_weight==0, mask,alpha)
             alpha = torch.softmax(alpha, -1).unsqueeze(-1)
             neighbor_vector = torch.sum(alpha * neighbor_vector, dim=-2)
         else:
