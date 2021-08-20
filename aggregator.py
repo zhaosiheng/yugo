@@ -79,6 +79,7 @@ class GlobalAggregator(nn.Module):
     def forward(self, self_vectors, neighbor_vector, batch_size, masks, neighbor_weight, extra_vector=None, t=1.0):
         if extra_vector is not None:
             batch_size = neighbor_vector.shape[0]
+            seqs_len = self_vectors.shape[1]
             neighbor_vector = neighbor_vector.view(batch_size, -1, self.dim)
             neighbor_weight = neighbor_weight.view(batch_size, -1)
 
@@ -88,7 +89,7 @@ class GlobalAggregator(nn.Module):
             mask = -9e15 * torch.ones_like(alpha)
             alpha = torch.where(neighbor_weight==0, mask,alpha)
             alpha = torch.softmax(alpha, -1).unsqueeze(-1)
-            neighbor_vector = torch.sum(alpha * neighbor_vector, dim=-2).unsqueeze(-2)
+            neighbor_vector = torch.sum(alpha * neighbor_vector, dim=-2).unsqueeze(-2).repeat(1, seqs_len, 1)
         else:
             neighbor_vector = torch.mean(neighbor_vector, dim=2)
         # self_vectors = F.dropout(self_vectors, 0.5, training=self.training)
