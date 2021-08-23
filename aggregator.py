@@ -101,7 +101,7 @@ class GlobalAggregator(nn.Module):
         extra_vector = extra_vector.unsqueeze(-2).repeat(1, seqs_len, 1)
         gate = torch.sigmoid(torch.matmul(self_vectors, self.w0_h) + torch.matmul(extra_vector, self.w0_s))
         #extra_vector = gate * extra_vector + (1 - gate) * self_vectors
-        extra_vector = self_vectors
+        
         output = torch.cat([extra_vector, neighbor_vector], -1)
         output = F.dropout(output, self.dropout, training=self.training)
         output = torch.matmul(output, self.w_3)
