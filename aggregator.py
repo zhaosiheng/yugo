@@ -89,11 +89,11 @@ class GlobalAggregator(nn.Module):
             mask = -9e15 * torch.ones_like(alpha)
             alpha = torch.where(neighbor_weight==0, mask,alpha)
             alpha = torch.softmax(alpha, -1).unsqueeze(-1)
-            neighbor_vector = torch.sum(alpha * neighbor_vector, dim=-2).unsqueeze(-2).repeat(1, seqs_len, 1)
+            neighbor_vector = torch.sum(alpha * neighbor_vector, dim=-2).unsqueeze(-2) .repeat(1, seqs_len, 1)
         else:
             neighbor_vector = torch.mean(neighbor_vector, dim=2)
         # self_vectors = F.dropout(self_vectors, 0.5, training=self.training)
-        output = torch.cat([extra_vector, neighbor_vector], -1)
+        output = torch.cat([extra_vector.unsqueeze(-2) .repeat(1, seqs_len, 1), neighbor_vector], -1)
         output = F.dropout(output, self.dropout, training=self.training)
         output = torch.matmul(output, self.w_3)
 
