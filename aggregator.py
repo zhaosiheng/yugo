@@ -98,11 +98,11 @@ class GlobalAggregator(nn.Module):
         else:
             neighbor_vector = torch.mean(neighbor_vector, dim=2)
         # self_vectors = F.dropout(self_vectors, 0.5, training=self.training)
-        extra_vector = extra_vector.unsqueeze(-2).repeat(1, seqs_len, 1)
+        extra_vector = extra_vector.unsqueeze(-2)
         gate = torch.sigmoid(torch.matmul(self_vectors, self.w0_h) + torch.matmul(extra_vector, self.w0_s))
-        #extra_vector = gate * extra_vector + (1 - gate) * self_vectors
+        gate_vector = gate * extra_vector + (1 - gate) * self_vectors
         
-        output = torch.cat([extra_vector, neighbor_vector], -1)
+        output = torch.cat([gate_vector, neighbor_vector], -1)
         output = F.dropout(output, self.dropout, training=self.training)
         output = torch.matmul(output, self.w_3)
 
