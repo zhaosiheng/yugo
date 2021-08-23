@@ -90,7 +90,7 @@ class GlobalAggregator(nn.Module):
             gate = torch.sigmoid(torch.matmul(self_vectors, self.w0_h) + torch.matmul(extra_vector, self.w0_s))
             extra_vector = gate * extra_vector + (1 - gate) * self_vectors
 
-            alpha = torch.matmul(extra_vector * neighbor_vector, self.w_1)
+            alpha = torch.matmul(extra_vector.unsqueeze(-2).repeat(1,1,12,1).view(neighbor_vector.shape) * neighbor_vector, self.w_1)
             alpha = F.leaky_relu(alpha, negative_slope=0.2)
             alpha = torch.matmul(alpha, self.w_2).squeeze(-1) * t
             mask = -9e15 * torch.ones_like(alpha)
