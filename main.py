@@ -43,6 +43,8 @@ parser.add_argument('--E', type=float, default=8)
 parser.add_argument('--t0', type=float, default=0.5)
 parser.add_argument('--te', type=float, default=100)
 
+parser.add_argument('--t', type=float, default=1.0)
+
 
 
 opt = parser.parse_args()
@@ -53,19 +55,19 @@ def main():
 
     if opt.dataset == 'diginetica':
         num_node = 43098
-        opt.n_iter = 1
-        opt.dropout_gcn = 0.2
+        #opt.n_iter = 1
+        #opt.dropout_gcn = 0.2
         opt.dropout_local = 0.0
     elif opt.dataset == 'Nowplaying':
         num_node = 60417
-        opt.n_iter = 1
-        opt.dropout_gcn = 0.0
+        #opt.n_iter = 1
+        #opt.dropout_gcn = 0.0
         opt.dropout_local = 0.0
     elif opt.dataset == 'Tmall':
         num_node = 40728
-        opt.n_iter = 1
+        #opt.n_iter = 1
         opt.dropout_gcn = 0.6
-        opt.dropout_local = 0.5
+        #pt.dropout_local = 0.5
     else:
         num_node = 310
 
