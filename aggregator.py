@@ -98,5 +98,5 @@ class GlobalAggregator(nn.Module):
         output = torch.matmul(output, self.w_3)
 
         output = self.act(output)
-        return output
+        return output.unsqueeze(-2).repeat(1, seqs_len, 1)
 
