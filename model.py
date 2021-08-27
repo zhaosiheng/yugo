@@ -119,7 +119,7 @@ class CombineGraph(Module):
         hz = torch.sum(self.embedding(inputs) * mask, -2) / torch.sum(mask, 1)
         #h = torch.matmul(self.leakyrelu(torch.matmul(torch.cat((hs, mask.squeeze(-1).sum(-1).unsqueeze(-1)), -1), self.Q)), self.P)
         #h = torch.matmul(self.leakyrelu(torch.matmul(torch.cat((hs, torch.log2(mask.squeeze(-1).sum(-1).unsqueeze(-1))), -1), self.Q)), self.P)
-        h = torch.matmul(self.leakyrelu(torch.matmul(hs, self.Q)), self.P)
+        h = torch.matmul(self.leakyrelu(torch.matmul(hz, self.Q)), self.P)
         gama = torch.softmax(h * min(self.opt.t0 * pow(self.opt.te / self.opt.t0, epoch / self.opt.E), self.opt.te), 1)
         
         '''
