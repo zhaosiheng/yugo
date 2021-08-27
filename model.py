@@ -43,8 +43,8 @@ class CombineGraph(Module):
         self.mine_w_1 = nn.Parameter(torch.Tensor(1, opt.pos_emb_len))
         self.mine_q_1 = nn.Parameter(torch.Tensor(1, opt.pos_emb_len))
         
-        self.Q = nn.Parameter(torch.Tensor(self.dim, self.dim))
-        self.P = nn.Parameter(torch.Tensor(self.dim, opt.pos_num))
+        self.Q = nn.Parameter(torch.Tensor(self.dim, (self.dim + self.opt.pos_num) / 2))
+        self.P = nn.Parameter(torch.Tensor((self.dim + self.opt.pos_num) / 2), opt.pos_num))
         '''
         self.Q_4 = nn.Parameter(torch.Tensor(self.dim * 2 + 1, self.dim))
         self.P_4 = nn.Parameter(torch.Tensor(self.dim, 1))
@@ -116,10 +116,11 @@ class CombineGraph(Module):
         '''(3)'''
         pos_emb = self.pos_emb[:, :len, :].view(self.opt.pos_num, len * self.dim)
         
-        hz = torch.sum(self.embedding(inputs) * mask, -2) / torch.sum(mask, 1)
+        #hz = torch.sum(self.embedding(inputs) * mask, -2) / torch.sum(mask, 1)
+        hz = self.embedding(inputs) * mask
         #h = torch.matmul(self.leakyrelu(torch.matmul(torch.cat((hs, mask.squeeze(-1).sum(-1).unsqueeze(-1)), -1), self.Q)), self.P)
         #h = torch.matmul(self.leakyrelu(torch.matmul(torch.cat((hs, torch.log2(mask.squeeze(-1).sum(-1).unsqueeze(-1))), -1), self.Q)), self.P)
-        h = torch.matmul(self.leakyrelu(torch.matmul(hz, self.Q)), self.P)
+        h = torch.matmul(self.leakyrelu(torch.matmul(hz, self.Q)), self.P).sum(-2) / torch.sum(mask, 1)
         gama = torch.softmax(h * min(self.opt.t0 * pow(self.opt.te / self.opt.t0, epoch / self.opt.E), self.opt.te), 1)
         
         '''
