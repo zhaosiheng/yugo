@@ -44,7 +44,7 @@ class CombineGraph(Module):
         self.mine_q_1 = nn.Parameter(torch.Tensor(1, opt.pos_emb_len))
         
         self.Q = nn.Parameter(torch.Tensor(self.dim, (self.dim + self.opt.pos_num) / 2))
-        self.P = nn.Parameter(torch.Tensor((self.dim + self.opt.pos_num) / 2), opt.pos_num))
+        self.P = nn.Parameter(torch.Tensor((self.dim + self.opt.pos_num) / 2, opt.pos_num))
         '''
         self.Q_4 = nn.Parameter(torch.Tensor(self.dim * 2 + 1, self.dim))
         self.P_4 = nn.Parameter(torch.Tensor(self.dim, 1))
