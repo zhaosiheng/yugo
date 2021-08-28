@@ -93,7 +93,7 @@ class CombineGraph(Module):
         beta = beta * mask
         select = torch.sum(beta * hidden, 1)
         
-        select = torch.matmul(torch.cat([select, sl], -1), self.w_f)
+        #select = torch.matmul(torch.cat([select, sl], -1), self.w_f)
 
         b = self.embedding.weight[1:]  # n_nodes x latent_size
         scores = torch.matmul(select, b.transpose(1, 0))
