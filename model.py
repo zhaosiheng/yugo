@@ -92,15 +92,14 @@ class CombineGraph(Module):
         beta = torch.matmul(nh, self.w_2)
         beta = beta * mask
         select = torch.sum(beta * hidden, 1)
-        return select
-        #select = torch.matmul(torch.cat([select, sl], -1), self.w_f)
+       #select = torch.matmul(torch.cat([select, sl], -1), self.w_f)
         
-
-    def fusion(self, sg, sl):
-        select = torch.matmul(torch.cat([sg, sl], -1), self.w_f)
         b = self.embedding.weight[1:]  # n_nodes x latent_size
         scores = torch.matmul(select, b.transpose(1, 0))
         return scores
+
+
+
     
 
     def forward(self, inputs, adj, mask_item, item):
@@ -189,10 +188,8 @@ def forward(model, data):
     hidden, h_local = model(items, adj, mask, inputs)
     get = lambda index: hidden[index][alias_inputs[index]]
     seq_hidden = torch.stack([get(i) for i in torch.arange(len(alias_inputs)).long()])
-    
-    get_hat = lambda index: h_local[index][alias_inputs[index]]
-    seq_hidden_hat = torch.stack([get_hat(i) for i in torch.arange(len(alias_inputs)).long()])
-    return targets, model.fusion(model.compute_scores(seq_hidden, mask), model.compute_scores(seq_hidden_hat, mask))
+
+    return targets, model.compute_scores(seq_hidden, mask)
 
 
 def train_test(model, train_data, test_data):
