@@ -80,6 +80,7 @@ class CombineGraph(Module):
         last = (torch.sum(mask, 1).squeeze(-1) - 1).long()
         print(last)
         print((hidden*mask)[0,:,:])
+        print((hidden*mask)[:,last,:])
 
 
         hs = torch.sum(hidden * mask, -2) / torch.sum(mask, 1)
