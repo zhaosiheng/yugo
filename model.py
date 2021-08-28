@@ -78,7 +78,7 @@ class CombineGraph(Module):
         pos_emb = pos_emb.unsqueeze(0).repeat(batch_size, 1, 1)
         
         
-        
+        print(torch.sum(mask, 1))
         print(hidden[torch.arange(mask.shape[0]).long(), (torch.sum(mask, 1) - 1).long(),:].shape)
 
 
