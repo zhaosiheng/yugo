@@ -190,8 +190,9 @@ def forward(model, data):
     get = lambda index: hidden[index][alias_inputs[index]]
     seq_hidden = torch.stack([get(i) for i in torch.arange(len(alias_inputs)).long()])
     
-    
-    return targets, model.fusion(model.compute_scores(seq_hidden, mask), model.compute_scores(seq_hidden, mask))
+    get = lambda index: h_local[index][alias_inputs[index]]
+    seq_hidden_hat = torch.stack([get(i) for i in torch.arange(len(alias_inputs)).long()])
+    return targets, model.fusion(model.compute_scores(seq_hidden, mask), model.compute_scores(seq_hidden_hat, mask))
 
 
 def train_test(model, train_data, test_data):
