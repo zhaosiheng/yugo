@@ -47,7 +47,7 @@ class CombineGraph(Module):
         self.w_2 = nn.Parameter(torch.Tensor(self.dim, 1))
         self.glu1 = nn.Linear(self.dim, self.dim)
         self.glu2 = nn.Linear(self.dim, self.dim, bias=False)
-        self.glu3 = nn.Linear(self.dim, self.dim, bias=False)
+        
         self.linear_transform = nn.Linear(self.dim, self.dim, bias=False)
         
         self.w_f = nn.Parameter(torch.Tensor(self.dim * 2, self.dim))
@@ -72,7 +72,7 @@ class CombineGraph(Module):
         # return self.adj_all[target.view(-1)][:, index], self.num[target.view(-1)][:, index]
         return self.adj_all[target.view(-1)], self.num[target.view(-1)]
 
-    def compute_scores(self, hidden, mask, s_global):
+    def compute_scores(self, hidden, mask):
         mask = mask.float().unsqueeze(-1)
 
         batch_size = hidden.shape[0]
@@ -80,15 +80,15 @@ class CombineGraph(Module):
         pos_emb = self.pos_embedding.weight[:len]
         pos_emb = pos_emb.unsqueeze(0).repeat(batch_size, 1, 1)
         
-        last =  (torch.sum(mask, 1) - 1).squeeze(-1).long()
-        sl = hidden[torch.arange(mask.shape[0]).long(), last]
+        #last =  (torch.sum(mask, 1) - 1).squeeze(-1).long()
+        #sl = hidden[torch.arange(mask.shape[0]).long(), last]
 
 
         hs = torch.sum(hidden * mask, -2) / torch.sum(mask, 1)
         hs = hs.unsqueeze(-2).repeat(1, len, 1)
         nh = torch.matmul(torch.cat([pos_emb, hidden], -1), self.w_1)
         nh = torch.tanh(nh)
-        nh = torch.sigmoid(self.glu1(nh) + self.glu2(hs) + self.glu3(sl.unsqueeze(-2)))
+        nh = torch.sigmoid(self.glu1(nh) + self.glu2(hs))
         beta = torch.matmul(nh, self.w_2)
         beta = beta * mask
         select = torch.sum(beta * hidden, 1)
@@ -98,6 +98,9 @@ class CombineGraph(Module):
         b = self.embedding.weight[1:]  # n_nodes x latent_size
         scores = torch.matmul(select, b.transpose(1, 0))
         return scores
+    
+    def fusion(self, sg, sl):
+        return torch.matmul(torch.cat([sg, sl], -1), self.w_f)
 
     def forward(self, inputs, adj, mask_item, item):
         batch_size = inputs.shape[0]
@@ -157,7 +160,7 @@ class CombineGraph(Module):
         s_global = F.dropout(s_global, self.dropout_global, training=self.training)
         output = h_local + s_global
 
-        return output, s_global
+        return output, h_local
 
 
 def trans_to_cuda(variable):
@@ -182,10 +185,12 @@ def forward(model, data):
     mask = trans_to_cuda(mask).long()
     inputs = trans_to_cuda(inputs).long()
 
-    hidden, s_global = model(items, adj, mask, inputs)
+    hidden, h_local = model(items, adj, mask, inputs)
     get = lambda index: hidden[index][alias_inputs[index]]
     seq_hidden = torch.stack([get(i) for i in torch.arange(len(alias_inputs)).long()])
-    return targets, model.compute_scores(seq_hidden, mask, s_global)
+    
+    
+    return targets, model.fusion(model.compute_scores(seq_hidden, mask), model.compute_scores(seq_hidden, mask))
 
 
 def train_test(model, train_data, test_data):
