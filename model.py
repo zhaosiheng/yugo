@@ -79,7 +79,7 @@ class CombineGraph(Module):
         
         
         
-        print((hidden*mask)[torch.arange(mask.shape[0]).long(), (torch.sum(mask, 1) - 1).long()].shape)
+        print(hidden[torch.arange(mask.shape[0]).long(), (torch.sum(mask, 1) - 1).long(),:].shape)
 
 
         hs = torch.sum(hidden * mask, -2) / torch.sum(mask, 1)
