@@ -47,7 +47,10 @@ class CombineGraph(Module):
         self.w_2 = nn.Parameter(torch.Tensor(self.dim, 1))
         self.glu1 = nn.Linear(self.dim, self.dim)
         self.glu2 = nn.Linear(self.dim, self.dim, bias=False)
+        self.glu3 = nn.Linear(self.dim, self.dim, bias=False)
         self.linear_transform = nn.Linear(self.dim, self.dim, bias=False)
+        
+        self.w_f = nn.Parameter(torch.Tensor(self.dim * 2, self.dim))
 
         self.leakyrelu = nn.LeakyReLU(opt.alpha)
         self.loss_function = nn.CrossEntropyLoss()
@@ -78,18 +81,19 @@ class CombineGraph(Module):
         pos_emb = pos_emb.unsqueeze(0).repeat(batch_size, 1, 1)
         
         last =  (torch.sum(mask, 1) - 1).squeeze(-1).long()
-        print(last.shape)
-        print(hidden[torch.arange(mask.shape[0]).long(), last].shape)
+        sl = hidden[torch.arange(mask.shape[0]).long(), last]
 
 
         hs = torch.sum(hidden * mask, -2) / torch.sum(mask, 1)
         hs = hs.unsqueeze(-2).repeat(1, len, 1)
         nh = torch.matmul(torch.cat([pos_emb, hidden], -1), self.w_1)
         nh = torch.tanh(nh)
-        nh = torch.sigmoid(self.glu1(nh) + self.glu2(hs))
+        nh = torch.sigmoid(self.glu1(nh) + self.glu2(hs) + self.glu3(sl))
         beta = torch.matmul(nh, self.w_2)
         beta = beta * mask
         select = torch.sum(beta * hidden, 1)
+        
+        select = torch.matmul(torch.cat([select, sl], -1), self.w_f)
 
         b = self.embedding.weight[1:]  # n_nodes x latent_size
         scores = torch.matmul(select, b.transpose(1, 0))
