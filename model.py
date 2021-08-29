@@ -135,7 +135,7 @@ class CombineGraph(Module):
         num_tor = torch.matmul(gama, torch.norm(pos_emb, dim=-1).unsqueeze(-1))
         pos_emb = (de_tor * num_tor).view(batch_size, len, self.dim)
         '''
-        pos_emb = torch.matmul(gama, pos_emb)
+        pos_emb = (gama * pos_emb)
         print(pos_emb.shape)
         self.gama = gama
         
