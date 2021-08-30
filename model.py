@@ -123,7 +123,7 @@ class CombineGraph(Module):
         #h = torch.matmul(self.leakyrelu(torch.matmul(torch.sum(mask, 1), self.Q)), self.P).sum(-2) / torch.sum(mask, 1)
         
         #gama = torch.softmax(h * min(self.opt.t0 * pow(self.opt.te / self.opt.t0, epoch / self.opt.E), self.opt.te), 1)
-        classify = torch.one_hot(torch.sum(mask, 1), num_class=self.opt.pos_num)
+        classify = F.one_hot(torch.sum(mask, 1), num_class=self.opt.pos_num)
         print(classify.shape)
         '''
         pai = gama * pos_emb
