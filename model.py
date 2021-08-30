@@ -82,7 +82,6 @@ class CombineGraph(Module):
 
         batch_size = hidden.shape[0]
         len = hidden.shape[1]
-        print(len)
         hs = torch.sum(hidden * mask, -2) / torch.sum(mask, 1)
         
         '''(1)
