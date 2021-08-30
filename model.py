@@ -113,7 +113,7 @@ class CombineGraph(Module):
 '''
         
         '''(3)'''
-        pos_emb = self.pos_emb[:, :len, :].view(self.opt.pos_num, len * self.dim)
+        pos_emb = self.pos_emb[:, :len, :].view(self.opt.pos_num, len * self.dim).type(torch.LongTensor)
         
         #hz = torch.sum(self.embedding(inputs) * mask, -2) / torch.sum(mask, 1)
         hz = self.embedding(inputs) * mask
@@ -122,7 +122,7 @@ class CombineGraph(Module):
         #h = torch.matmul(self.leakyrelu(torch.matmul(torch.sum(mask, 1), self.Q)), self.P).sum(-2) / torch.sum(mask, 1)
         
         #gama = torch.softmax(h * min(self.opt.t0 * pow(self.opt.te / self.opt.t0, epoch / self.opt.E), self.opt.te), 1)
-        gama = F.one_hot(torch.sum(mask, 1).squeeze(-1).to(torch.int64), num_classes=self.opt.pos_num)
+        gama = F.one_hot(torch.sum(mask, 1).squeeze(-1).to(torch.int64), num_classes=self.opt.pos_num).type(torch.LongTensor)
         
         '''
         pai = gama * pos_emb
