@@ -119,10 +119,10 @@ class CombineGraph(Module):
         hz = self.embedding(inputs) * mask
         #h = torch.matmul(self.leakyrelu(torch.matmul(torch.cat((hs, mask.squeeze(-1).sum(-1).unsqueeze(-1)), -1), self.Q)), self.P)
         #h = torch.matmul(self.leakyrelu(torch.matmul(torch.cat((hs, torch.log2(mask.squeeze(-1).sum(-1).unsqueeze(-1))), -1), self.Q)), self.P)
-        #h = torch.matmul(self.leakyrelu(torch.matmul(torch.sum(mask, 1), self.Q)), self.P).sum(-2) / torch.sum(mask, 1)
+        h = torch.matmul(self.leakyrelu(torch.matmul(torch.sum(mask, 1), self.Q)), self.P).sum(-2) / torch.sum(mask, 1)
         
-        #gama = torch.softmax(h * min(self.opt.t0 * pow(self.opt.te / self.opt.t0, epoch / self.opt.E), self.opt.te), 1)
-        gama = F.one_hot(torch.sum(mask, 1).squeeze(-1).to(torch.int64), num_classes=self.opt.pos_num).type(torch.LongTensor)
+        gama = torch.softmax(h * min(self.opt.t0 * pow(self.opt.te / self.opt.t0, epoch / self.opt.E), self.opt.te), 1)
+        #gama = F.one_hot(torch.sum(mask, 1).squeeze(-1).to(torch.int64), num_classes=self.opt.pos_num).type(torch.LongTensor)
         
         '''
         pai = gama * pos_emb
@@ -130,16 +130,16 @@ class CombineGraph(Module):
         l2 = (pai).pow(2).sum(-1).sum(-1).pow(0.5).sum(-1) / (pos_emb).pow(2).sum(-1).sum(-1).pow(0.5)
         pos_emb = l2.view(batch_size, 1, 1) * pos_emb
         
-        
+        '''
         mean_v = torch.matmul(gama, pos_emb)
         de_tor = torch.nn.functional.normalize(mean_v, p=2, dim=-1)
         num_tor = torch.matmul(gama, torch.norm(pos_emb, dim=-1).unsqueeze(-1))
         pos_emb = (de_tor * num_tor).view(batch_size, len, self.dim)
-        '''
-        pos_emb = torch.matmul(gama, pos_emb).view(batch_size, len, self.dim)
-        pos_emb = trans_to_cuda(pos_emb)
         
-        self.gama = 0
+        #pos_emb = torch.matmul(gama, pos_emb).view(batch_size, len, self.dim)
+        
+        
+        self.gama = gama
         
         '''(4)
         pos_emb = self.pos_emb[:, :len, :]
@@ -163,8 +163,10 @@ class CombineGraph(Module):
         hs = hs.unsqueeze(-2).repeat(1, len, 1)
         nh = torch.matmul(torch.cat([pos_emb, hidden], -1), self.w_1)
         nh = torch.tanh(nh)
-        nh = torch.sigmoid(self.glu1(nh) + self.glu2(hs))
+        #nh = torch.sigmoid(self.glu1(nh) + self.glu2(hs))
+        nh = torch.sigmoid(self.glu2(hs))
         beta = torch.matmul(nh, self.w_2)
+        self.gama = beta
         beta = beta * mask
         select = torch.sum(beta * hidden, 1)
 
