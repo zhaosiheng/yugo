@@ -137,6 +137,7 @@ class CombineGraph(Module):
         pos_emb = (de_tor * num_tor).view(batch_size, len, self.dim)
         '''
         pos_emb = torch.matmul(gama, pos_emb).view(batch_size, len, self.dim)
+        pos_emb = trans_to_cuda(pos_emb)
         
         #self.gama = gama
         
