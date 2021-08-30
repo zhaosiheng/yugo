@@ -113,7 +113,7 @@ class CombineGraph(Module):
 '''
         
         '''(3)'''
-        pos_emb = self.pos_emb[:, :len, :].view(self.opt.pos_num, len * self.dim).type(torch.LongTensor)
+        pos_emb = self.pos_emb[:, :len, :].view(self.opt.pos_num, len * self.dim)
         
         #hz = torch.sum(self.embedding(inputs) * mask, -2) / torch.sum(mask, 1)
         hz = self.embedding(inputs) * mask
