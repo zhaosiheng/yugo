@@ -123,23 +123,23 @@ class CombineGraph(Module):
         #h = torch.matmul(self.leakyrelu(torch.matmul(torch.sum(mask, 1), self.Q)), self.P).sum(-2) / torch.sum(mask, 1)
         
         #gama = torch.softmax(h * min(self.opt.t0 * pow(self.opt.te / self.opt.t0, epoch / self.opt.E), self.opt.te), 1)
-        classify = F.one_hot(torch.sum(mask, 1).to(torch.int64), num_classes=self.opt.pos_num)
-        print(classify.shape)
+        gama = F.one_hot(torch.sum(mask, 1).squeeze(-1).to(torch.int64), num_classes=self.opt.pos_num)
+        
         '''
         pai = gama * pos_emb
         pos_emb = pai.sum(1)
         l2 = (pai).pow(2).sum(-1).sum(-1).pow(0.5).sum(-1) / (pos_emb).pow(2).sum(-1).sum(-1).pow(0.5)
         pos_emb = l2.view(batch_size, 1, 1) * pos_emb
         
-        '''
+        
         mean_v = torch.matmul(gama, pos_emb)
         de_tor = torch.nn.functional.normalize(mean_v, p=2, dim=-1)
         num_tor = torch.matmul(gama, torch.norm(pos_emb, dim=-1).unsqueeze(-1))
         pos_emb = (de_tor * num_tor).view(batch_size, len, self.dim)
+        '''
+        pos_emb = torch.matmul(gama, pos_emb).view(batch_size, len, self.dim)
         
-        #pos_emb = torch.matmul(gama, pos_emb).view(batch_size, len, self.dim)
-        
-        self.gama = gama
+        #self.gama = gama
         
         '''(4)
         pos_emb = self.pos_emb[:, :len, :]
