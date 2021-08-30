@@ -165,7 +165,6 @@ class CombineGraph(Module):
         nh = torch.tanh(nh)
         nh = torch.sigmoid(self.glu1(nh) + self.glu2(hs))
         beta = torch.matmul(nh, self.w_2)
-        self.gama = beta
         beta = beta * mask
         select = torch.sum(beta * hidden, 1)
 
