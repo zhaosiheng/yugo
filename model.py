@@ -131,13 +131,13 @@ class CombineGraph(Module):
         l2 = (pai).pow(2).sum(-1).sum(-1).pow(0.5).sum(-1) / (pos_emb).pow(2).sum(-1).sum(-1).pow(0.5)
         pos_emb = l2.view(batch_size, 1, 1) * pos_emb
         
-        
+        '''
         mean_v = torch.matmul(gama, pos_emb)
         de_tor = torch.nn.functional.normalize(mean_v, p=2, dim=-1)
         num_tor = torch.matmul(gama, torch.norm(pos_emb, dim=-1).unsqueeze(-1))
         pos_emb = (de_tor * num_tor).view(batch_size, len, self.dim)
-        '''
-        pos_emb = torch.matmul(gama, trans_to_cuda(pos_emb).type(torch.LongTensor)).view(batch_size, len, self.dim)
+        
+        #pos_emb = torch.matmul(gama, pos_emb).view(batch_size, len, self.dim)
         
         #self.gama = gama
         
