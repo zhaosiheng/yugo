@@ -64,8 +64,8 @@ def main():
     elif opt.dataset == 'yoochoose1_64':
         num_node = 37484
         opt.n_iter = 1
-        opt.dropout_gcn = 0.0
-        opt.dropout_local = 0.0
+        #opt.dropout_gcn = 0.0
+        #opt.dropout_local = 0.0
     else:
         num_node = 310
 
