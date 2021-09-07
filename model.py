@@ -148,9 +148,9 @@ class CombineGraph(Module):
         pos_emb = torch.diagonal(pos_emb, dim1=1, dim2=2).transpose(-2,-1)
         self.gama = 0
         hs = hs.unsqueeze(-2).repeat(1, len, 1)
-        nh = torch.matmul(torch.cat([pos_emb, hidden], -1), self.w_1)
-        nh = torch.tanh(nh)
-        nh = torch.sigmoid(self.glu1(nh) + self.glu2(hs))
+        #nh = torch.matmul(torch.cat([pos_emb, hidden], -1), self.w_1)
+        #nh = torch.tanh(nh)
+        nh = torch.sigmoid(self.glu1(pos_emb+hidden) + self.glu2(hs))
         beta = torch.matmul(nh, self.w_2)
         beta = beta * mask
         select = torch.sum(beta * hidden, 1)
