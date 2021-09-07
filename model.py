@@ -146,7 +146,7 @@ class CombineGraph(Module):
         gama = torch.softmax(h * min(self.opt.t0 * pow(self.opt.te / self.opt.t0, epoch / self.opt.E), self.opt.te), -1)
         pos_emb = torch.matmul(gama, pos_emb.view(self.opt.pos_num, -1)).view(batch_size, len, len, self.dim)
         pos_emb = torch.diagonal(pos_emb, dim1=1, dim2=2).transpose(-2,-1)
-        
+        self.gama = 0
         hs = hs.unsqueeze(-2).repeat(1, len, 1)
         nh = torch.matmul(torch.cat([pos_emb, hidden], -1), self.w_1)
         nh = torch.tanh(nh)
