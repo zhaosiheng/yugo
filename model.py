@@ -139,7 +139,7 @@ class CombineGraph(Module):
         h_alias = hidden.detach()
         hl = h_alias[torch.arange(batch_size).long(), (torch.sum(mask, 1) - 1).squeeze(-1).long()]
 
-        concat = torch.cat([(h_alias * hl.unsqueeze(-2)).unsqueeze(1).repeat(1,self.opt.pos_num,1,1), pos_emb.unsqueeze(0).repeat(batch_size,1,1,1)], -1)
+        concat = torch.cat([(h_alias * hl.unsqueeze(-2)).unsqueeze(1).repeat(1,self.opt.pos_num,1,1), pos_emb.detach().unsqueeze(0).repeat(batch_size,1,1,1)], -1)
 
 
         h = torch.matmul(self.leakyrelu(torch.matmul(concat.transpose(1,2), self.Q_4)), self.P_4).squeeze(-1)
