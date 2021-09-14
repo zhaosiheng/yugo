@@ -24,7 +24,7 @@ class LocalAggregator(nn.Module):
         self.dropout = dropout
 
         self.hop = hop +1
-        self.a_list = torch.nn.ParameterList([nn.Parameter(torch.Tensor(self.dim, 1)) for i in range(hop)])
+        self.a_list = torch.nn.ParameterList([nn.Parameter(torch.Tensor(self.dim, 1)) for i in range(self.hop)])
 
         self.bias = nn.Parameter(torch.Tensor(self.dim))
 
