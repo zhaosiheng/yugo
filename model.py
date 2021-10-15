@@ -158,7 +158,7 @@ class CombineGraph(Module):
         # combine
         h_local = F.dropout(h_local, self.dropout_local, training=self.training)
         s_global = F.dropout(s_global, self.dropout_global, training=self.training)
-        output = h_local + s_global
+        output = h_local + s_global / mask_item.sum(-1).unsqueeze(-1).unsqueeze(-1)
 
         return output, h_local
 
