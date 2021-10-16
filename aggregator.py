@@ -69,7 +69,7 @@ class GlobalAggregator(nn.Module):
 
         self.w_1 = nn.Parameter(torch.Tensor(self.dim * 2, self.dim))
         self.w_2 = nn.Parameter(torch.Tensor(self.dim, 1))
-        self.w_3 = nn.Parameter(torch.Tensor(2 * self.dim, self.dim))
+        self.w_3 = nn.Parameter(torch.Tensor(self.dim, self.dim))
         self.bias = nn.Parameter(torch.Tensor(self.dim))
 
     def forward(self, self_vectors, neighbor_vector, batch_size, masks, neighbor_weight, extra_vector=None):
@@ -83,7 +83,8 @@ class GlobalAggregator(nn.Module):
         else:
             neighbor_vector = torch.mean(neighbor_vector, dim=2)
         # self_vectors = F.dropout(self_vectors, 0.5, training=self.training)
-        output = torch.cat([self_vectors, neighbor_vector], -1)
+        #output = torch.cat([self_vectors, neighbor_vector], -1)
+        output = neighbor_vector
         output = F.dropout(output, self.dropout, training=self.training)
         output = torch.matmul(output, self.w_3)
         output = output.view(batch_size, -1, self.dim)
