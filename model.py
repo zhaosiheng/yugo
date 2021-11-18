@@ -140,7 +140,7 @@ class CombineGraph(Module):
         if epoch==6:
             exdata = torch.cat([log, gama], -1)
             exdata = exdata.cpu().detach().numpy().tolist()
-            txt = open("data.txt", 'w+')
+            txt = open("data.txt", 'a+')
             for i in exdata:
                 pprint(i, txt)
             txt.close()
