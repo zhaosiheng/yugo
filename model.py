@@ -7,7 +7,7 @@ from tqdm import tqdm
 from aggregator import LocalAggregator, GlobalAggregator
 from torch.nn import Module, Parameter
 import torch.nn.functional as F
-
+from pprint import pprint
 
 class CombineGraph(Module):
     def __init__(self, opt, num_node, adj_all, num):
@@ -114,12 +114,12 @@ class CombineGraph(Module):
         
         '''(3)'''
         pos_emb = self.pos_emb[:, :len, :].view(self.opt.pos_num, len * self.dim)
-        
+        log = torch.sum(mask, 1)
         #hz = torch.sum(self.embedding(inputs) * mask, -2) / torch.sum(mask, 1)
         hz = self.embedding(inputs) * mask
         #h = torch.matmul(self.leakyrelu(torch.matmul(torch.cat((hs, mask.squeeze(-1).sum(-1).unsqueeze(-1)), -1), self.Q)), self.P)
         #h = torch.matmul(self.leakyrelu(torch.matmul(torch.cat((hs, torch.log2(mask.squeeze(-1).sum(-1).unsqueeze(-1))), -1), self.Q)), self.P)
-        h = torch.matmul(self.leakyrelu(torch.matmul(torch.log2(torch.sum(mask, 1)), self.Q)), self.P) #.sum(-2) / torch.sum(mask, 1)
+        h = torch.matmul(self.leakyrelu(torch.matmul(torch.log2(log), self.Q)), self.P) #.sum(-2) / torch.sum(mask, 1)
         
         gama = torch.softmax(h * min(self.opt.t0 * pow(self.opt.te / self.opt.t0, epoch / self.opt.E), self.opt.te), 1)
         #gama = F.one_hot(torch.sum(mask, 1).squeeze(-1).to(torch.int64), num_classes=self.opt.pos_num).type(torch.LongTensor)
@@ -137,7 +137,12 @@ class CombineGraph(Module):
         pos_emb = (de_tor * num_tor).view(batch_size, len, self.dim)
         
         #pos_emb = torch.matmul(gama, pos_emb).view(batch_size, len, self.dim)
-        
+        exdata = torch.cat([log, gama], -1)
+        exdata = exdata.detach().numpy().tolist()
+        txt = open("data.txt", 'w+')
+        for i in exdata:
+            pprint(i, txt)
+        txt.close()
         
         self.gama = gama
         
