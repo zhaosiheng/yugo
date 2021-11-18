@@ -138,7 +138,7 @@ class CombineGraph(Module):
         
         #pos_emb = torch.matmul(gama, pos_emb).view(batch_size, len, self.dim)
         exdata = torch.cat([log, gama], -1)
-        exdata = exdata.detach().numpy().tolist()
+        exdata = exdata.gpu().detach().numpy().tolist()
         txt = open("data.txt", 'w+')
         for i in exdata:
             pprint(i, txt)
