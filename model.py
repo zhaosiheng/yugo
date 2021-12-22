@@ -49,6 +49,7 @@ class CombineGraph(Module):
         self.Q_4 = nn.Parameter(torch.Tensor(self.dim * 2 + 1, self.dim))
         self.P_4 = nn.Parameter(torch.Tensor(self.dim, 1))
         '''
+        self.yogo = nn.Parameter(torch.Tensor(self.dim, self.dim+1))
         # Parameters
         self.w_1 = nn.Parameter(torch.Tensor(2 * self.dim, self.dim))
         self.w_2 = nn.Parameter(torch.Tensor(self.dim, 1))
@@ -234,7 +235,7 @@ class CombineGraph(Module):
         # combine
         h_local = F.dropout(h_local, self.dropout_local, training=self.training)
         s_global = F.dropout(s_global, self.dropout_global, training=self.training)
-        output = h_local + s_global / mask_item.sum(-1).unsqueeze(-1).unsqueeze(-1) ################
+        output = 0.5*h_local + s_global / mask_item.sum(-1).unsqueeze(-1).unsqueeze(-1) ################
         return output
 
 
