@@ -179,8 +179,8 @@ class CombineGraph(Module):
        
         #select = torch.matmul(torch.cat([select, zr.squeeze(-2)], -1), self.yogo)
         
-        print(select.size)
-        print(zr.squeeze(-2).size)
+        print(select.shape)
+        print(zr.squeeze(-2).shape)
         
         b = self.embedding.weight[1:]  # n_nodes x latent_size
         scores = torch.matmul(select, b.transpose(1, 0))
