@@ -49,7 +49,7 @@ class CombineGraph(Module):
         self.Q_4 = nn.Parameter(torch.Tensor(self.dim * 2 + 1, self.dim))
         self.P_4 = nn.Parameter(torch.Tensor(self.dim, 1))
         '''
-        self.yogo = nn.Parameter(torch.Tensor(self.dim, self.dim+1))
+        self.yogo = nn.Parameter(torch.Tensor(self.dim * 2, self.dim))
         # Parameters
         self.w_1 = nn.Parameter(torch.Tensor(2 * self.dim, self.dim))
         self.w_2 = nn.Parameter(torch.Tensor(self.dim, 1))
@@ -171,10 +171,13 @@ class CombineGraph(Module):
         #nh = torch.matmul(torch.cat([pos_emb, hidden], -1), self.w_1)
         #nh = torch.tanh(nh)
         nh = pos_emb + hidden
+        zr = nh[torch.arange(nh.shape[0]).long(), torch.sum(mask, 1) - 1]
         nh = torch.sigmoid(self.glu1(nh) + self.glu2(hs))
         beta = torch.matmul(nh, self.w_2)
         beta = beta * mask
         select = torch.sum(beta * hidden, 1)
+        
+        select = torch.matmul(torch.cat([select, zr], -1), self.yogo)
 
         b = self.embedding.weight[1:]  # n_nodes x latent_size
         scores = torch.matmul(select, b.transpose(1, 0))
