@@ -171,13 +171,15 @@ class CombineGraph(Module):
         #nh = torch.matmul(torch.cat([pos_emb, hidden], -1), self.w_1)
         #nh = torch.tanh(nh)
         nh = pos_emb + hidden
-        zr = nh[torch.arange(mask.shape[0]).long(), torch.sum(mask, 1).long() - 1]
+        zr = nh[torch.sum(mask, 1).long() - 1]
         nh = torch.sigmoid(self.glu1(nh) + self.glu2(hs))
         beta = torch.matmul(nh, self.w_2)
         beta = beta * mask
         select = torch.sum(beta * hidden, 1)
        
         #select = torch.matmul(torch.cat([select, zr.squeeze(-2)], -1), self.yogo)
+        print(mask.shape)
+        print(torch.sum(mask, 1).shape)
         print(zr.shape)
         
         b = self.embedding.weight[1:]  # n_nodes x latent_size
