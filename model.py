@@ -171,7 +171,7 @@ class CombineGraph(Module):
         #nh = torch.matmul(torch.cat([pos_emb, hidden], -1), self.w_1)
         #nh = torch.tanh(nh)
         nh = pos_emb + hidden
-        zr = nh[torch.arange(nh.shape[0]).long(), torch.sum(mask, 1).long() - 1]
+        zr = nh[torch.arange(nh.shape[0]).long(), torch.sum(mask, 1).long() - 1, torch.arange(nh.shape[2]).long()]
         nh = torch.sigmoid(self.glu1(nh) + self.glu2(hs))
         beta = torch.matmul(nh, self.w_2)
         beta = beta * mask
