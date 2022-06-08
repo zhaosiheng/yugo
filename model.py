@@ -26,6 +26,7 @@ class CombineGraph(Module):
 
         # Aggregator
         self.local_agg = LocalAggregator(self.dim, self.opt.alpha, dropout=0.0)
+        self.two_floor = LocalAggregator(self.dim, self.opt.alpha, dropout=0.0)
         self.global_agg = []
         for i in range(self.hop):
             if opt.activate == 'relu':
@@ -94,6 +95,8 @@ class CombineGraph(Module):
 
         # local
         h_local = self.local_agg(h, adj, mask_item)
+        hh=self.two_floor(h_local, adj, mask_item)
+        h_local=h_local+hh
 
         # global
         item_neighbors = [inputs]
