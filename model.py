@@ -95,8 +95,7 @@ class CombineGraph(Module):
 
         # local
         h_local = self.local_agg(h, adj, mask_item)
-        hh=self.two_floor(h_local, adj, mask_item)
-        h_local=h_local+hh
+
 
         # global
         item_neighbors = [inputs]
