@@ -215,7 +215,7 @@ class CombineGraph(Module):
         # combine
         h_local = F.dropout(h_local, self.dropout_local, training=self.training)
         h_global = F.dropout(h_global, self.dropout_global, training=self.training)
-        output = h_local + h_global[0]
+        output = h_global
 
         return output
 
