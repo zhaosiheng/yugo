@@ -42,14 +42,14 @@ parser.add_argument('--pos_num', type=int, default=10)
 parser.add_argument('--E', type=float, default=8)
 parser.add_argument('--t0', type=float, default=0.5)
 parser.add_argument('--te', type=float, default=100)
-
+parser.add_argument('--seed', type=int, default=2020)
 
 
 opt = parser.parse_args()
 
 
 def main():
-    init_seed(2020)
+    init_seed(opt.seed)
 
     if opt.dataset == 'diginetica':
         num_node = 43098
