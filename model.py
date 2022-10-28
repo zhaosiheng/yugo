@@ -55,6 +55,7 @@ class CombineGraph(Module):
         self.w_2 = nn.Parameter(torch.Tensor(self.dim, 1))
         self.glu1 = nn.Linear(self.dim, self.dim)
         self.glu2 = nn.Linear(self.dim, self.dim, bias=False)
+        self.glu3 = nn.Linear(self.dim, self.dim)
         self.linear_transform = nn.Linear(self.dim, self.dim, bias=False)
 
         self.leakyrelu = nn.LeakyReLU(opt.alpha)
@@ -172,13 +173,15 @@ class CombineGraph(Module):
         nh = torch.matmul(torch.cat([pos_emb, hidden], -1), self.w_1)
         nh = torch.tanh(nh)
         #nh = pos_emb + hidden
-        #zr = nh[torch.arange(batch_size).long(), torch.sum(mask, 1).squeeze().long() - 1]
-        nh = torch.sigmoid(self.glu1(nh) + self.glu2(hs))
+        
+        zr = nh[torch.arange(batch_size).long(), torch.sum(mask, 1).squeeze().long() - 1]
+        
+        nh = torch.sigmoid(self.glu1(nh) + self.glu2(hs) + self.glu3(zr))
         beta = torch.matmul(nh, self.w_2)
         beta = beta * mask
         select = torch.sum(beta * hidden, 1)
         #w[hl||hg]
-        zr = nh[torch.arange(batch_size).long(), torch.sum(mask, 1).squeeze().long() - 1]
+
         select = torch.matmul(torch.cat([select, zr], -1), self.yogo)
 
         
