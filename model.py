@@ -183,8 +183,7 @@ class CombineGraph(Module):
         #w[hl||hg]
         select = torch.matmul(torch.cat([select, zr], -1), self.yogo)+select
 
-        #w[hl+hg]
-        #select = select + zr    
+           
 
         b = self.embedding.weight[1:]  # n_nodes x latent_size
         scores = torch.matmul(select, b.transpose(1, 0))
@@ -245,8 +244,8 @@ class CombineGraph(Module):
 
         # combine
         h_local = F.dropout(h_local, self.dropout_local, training=self.training)
-        s_global = F.dropout(s_global, self.dropout_global, training=self.training)
-        output = h_local + s_global / mask_item.sum(-1).unsqueeze(-1).unsqueeze(-1) ################
+        #s_global = F.dropout(s_global, self.dropout_global, training=self.training)
+        output = h_local #+ s_global / mask_item.sum(-1).unsqueeze(-1).unsqueeze(-1) ################
         return output
 
 
