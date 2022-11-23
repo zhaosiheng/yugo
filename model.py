@@ -164,6 +164,7 @@ def trans_to_cpu(variable):
 
 def forward(model, data, short_long = False):
     alias_inputs, adj, items, mask, targets, inputs = data
+    len_data = torch.sum(mask.float().unsqueeze(-1), 1).squeeze(-1)
     alias_inputs = trans_to_cuda(alias_inputs).long()
     items = trans_to_cuda(items).long()
     adj = trans_to_cuda(adj).float()
@@ -174,7 +175,7 @@ def forward(model, data, short_long = False):
     get = lambda index: hidden[index][alias_inputs[index]]
     seq_hidden = torch.stack([get(i) for i in torch.arange(len(alias_inputs)).long()])
     if short_long == True:
-        len_data = torch.sum(mask.float().unsqueeze(-1), 1).squeeze(-1)
+        
         print(len_data.shape)
         print(targets.shape)
         
@@ -213,7 +214,7 @@ def train_test(model, train_data, test_data):
         hit_l, mrr_l = [], []
         hit_alias_l, mrr_alias_l = [], []
         for data in test_loader:
-            targets, scores,len_data = forward(model, data, short_long=model.opt.s_l)
+            targets, scores, len_data = forward(model, data, short_long=model.opt.s_l)
             sub_scores = scores.topk(20)[1]
             sub_scores_alias = scores.topk(10)[1]
             sub_scores = trans_to_cpu(sub_scores).detach().numpy()
@@ -222,8 +223,7 @@ def train_test(model, train_data, test_data):
             len_data = len_data.numpy()
             for score, target, mask, len_ in zip(sub_scores, targets, test_data.mask, len_data):
                 #@20
-                print(target)
-                print(len_)
+
                 hit.append(np.isin(target - 1, score))
                 if len(np.where(score == target - 1)[0]) == 0:
                     mrr.append(0)
