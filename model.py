@@ -174,9 +174,9 @@ def forward(model, data, short_long = False):
     get = lambda index: hidden[index][alias_inputs[index]]
     seq_hidden = torch.stack([get(i) for i in torch.arange(len(alias_inputs)).long()])
     if short_long == True:
-        len = seq_hidden.shape[1]
-        print(len.shape)
-        print(len)
+        len_data = seq_hidden.shape[1]
+        print(len_data.shape)
+        print(len_data)
     return targets, model.compute_scores(seq_hidden, mask)
 
 
