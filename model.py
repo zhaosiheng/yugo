@@ -175,10 +175,6 @@ def forward(model, data, short_long = False):
     get = lambda index: hidden[index][alias_inputs[index]]
     seq_hidden = torch.stack([get(i) for i in torch.arange(len(alias_inputs)).long()])
     if short_long == True:
-        
-        print(len_data.shape)
-        print(targets.shape)
-        
         return targets, model.compute_scores(seq_hidden, mask), len_data
     return targets, model.compute_scores(seq_hidden, mask)
 
@@ -223,7 +219,8 @@ def train_test(model, train_data, test_data):
             len_data = len_data.numpy()
             for score, target, mask, len_ in zip(sub_scores, targets, test_data.mask, len_data):
                 #@20
-
+                print(target)
+                print(len_)
                 hit.append(np.isin(target - 1, score))
                 if len(np.where(score == target - 1)[0]) == 0:
                     mrr.append(0)
