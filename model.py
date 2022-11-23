@@ -235,12 +235,18 @@ def train_test(model, train_data, test_data):
                     
             for score, target, mask in zip(sub_scores_alias, targets, test_data.mask):
                 #@10
-                hit_alias.append(np.isin(target - 1, score))
-                if len(np.where(score == target - 1)[0]) == 0:
-                    mrr_alias.append(0)
+                if len_<=5:
+                    hit_alias.append(np.isin(target - 1, score))
+                    if len(np.where(score == target - 1)[0]) == 0:
+                        mrr_alias.append(0)
+                    else:
+                        mrr_alias.append(1 / (np.where(score == target - 1)[0][0] + 1))
                 else:
-                    mrr_alias.append(1 / (np.where(score == target - 1)[0][0] + 1))
-                
+                    hit_alias_l.append(np.isin(target - 1, score))
+                    if len(np.where(score == target - 1)[0]) == 0:
+                        mrr_alias_l.append(0)
+                    else:
+                        mrr_alias_l.append(1 / (np.where(score == target - 1)[0][0] + 1))
 
         result.append(np.mean(hit) * 100)
         result.append(np.mean(mrr) * 100)
@@ -253,7 +259,7 @@ def train_test(model, train_data, test_data):
 
         print(num_s)
         print(num_l)
-        return result
+        return result, result_l
     result = []
     hit, mrr = [], []
     hit_alias, mrr_alias = [], []
