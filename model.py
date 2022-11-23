@@ -221,6 +221,8 @@ def train_test(model, train_data, test_data):
                 #@20
                 print(target)
                 print(len_)
+                if len_<=5:
+                    print("yes")
                 hit.append(np.isin(target - 1, score))
                 if len(np.where(score == target - 1)[0]) == 0:
                     mrr.append(0)
