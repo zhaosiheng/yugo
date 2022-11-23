@@ -219,9 +219,11 @@ def train_test(model, train_data, test_data):
             sub_scores = trans_to_cpu(sub_scores).detach().numpy()
             sub_scores_alias = trans_to_cpu(sub_scores_alias).detach().numpy()
             targets = targets.numpy()
-            #len_data = len_data.numpy()
-            for score, target, mask in zip(sub_scores, targets, test_data.mask):
+            len_data = len_data.numpy()
+            for score, target, mask, len_ in zip(sub_scores, targets, test_data.mask, len_data):
                 #@20
+                print(target)
+                print(len_)
                 hit.append(np.isin(target - 1, score))
                 if len(np.where(score == target - 1)[0]) == 0:
                     mrr.append(0)
