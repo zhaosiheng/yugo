@@ -91,7 +91,7 @@ def main():
         print('-------------------------------------------------------')
         print('epoch: ', epoch)
         if opt.s_l==True:
-            hit, mrr, hit_alias, mrr_alias, hit_l, mrr_l, hit_alias_l, mrr_alias_l= train_test(model, train_data, test_data)
+            hit, mrr, hit_alias, mrr_alias, hit_l, mrr_l, hit_alias_l, mrr_alias_l = train_test(model, train_data, test_data)
             flag = 0
             if hit >= best_result[0]:
                 best_result[0] = hit

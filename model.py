@@ -206,7 +206,7 @@ def train_test(model, train_data, test_data):
         result = []
         hit, mrr = [], []
         hit_alias, mrr_alias = [], []
-        result_l = []
+        
         hit_l, mrr_l = [], []
         hit_alias_l, mrr_alias_l = [], []
         for data in test_loader:
@@ -254,10 +254,13 @@ def train_test(model, train_data, test_data):
         result.append(np.mean(hit_alias) * 100)
         result.append(np.mean(mrr_alias) * 100)
 
-        result_l.append(np.mean(hit_l) * 100)
-        result_l.append(np.mean(mrr_l) * 100)
+        result.append(np.mean(hit_l) * 100)
+        result.append(np.mean(mrr_l) * 100)
 
-        return result, result_l
+        result.append(np.mean(hit_alias_l) * 100)
+        result.append(np.mean(mrr_alias_l) * 100)
+
+        return result
     result = []
     hit, mrr = [], []
     hit_alias, mrr_alias = [], []
