@@ -209,7 +209,6 @@ def train_test(model, train_data, test_data):
         result_l = []
         hit_l, mrr_l = [], []
         hit_alias_l, mrr_alias_l = [], []
-        num_s, num_l = 0, 0
         for data in test_loader:
             targets, scores, len_data = forward(model, data, short_long=model.opt.s_l)
             sub_scores = scores.topk(20)[1]
@@ -221,14 +220,18 @@ def train_test(model, train_data, test_data):
             for score, target, mask, len_ in zip(sub_scores, targets, test_data.mask, len_data):
                 #@20
                 if len_<=5:
-                    num_s = num_s + 1
+                    hit.append(np.isin(target - 1, score))
+                    if len(np.where(score == target - 1)[0]) == 0:
+                        mrr.append(0)
+                    else:
+                        mrr_l.append(1 / (np.where(score == target - 1)[0][0] + 1))
                 else:
-                    num_l = num_l + 1
-                hit.append(np.isin(target - 1, score))
-                if len(np.where(score == target - 1)[0]) == 0:
-                    mrr.append(0)
-                else:
-                    mrr.append(1 / (np.where(score == target - 1)[0][0] + 1))
+                    hit_l.append(np.isin(target - 1, score))
+                    if len(np.where(score == target - 1)[0]) == 0:
+                        mrr.append(0)
+                    else:
+                        mrr_l.append(1 / (np.where(score == target - 1)[0][0] + 1))
+
                     
             for score, target, mask in zip(sub_scores_alias, targets, test_data.mask):
                 #@10
@@ -244,6 +247,9 @@ def train_test(model, train_data, test_data):
         
         result.append(np.mean(hit_alias) * 100)
         result.append(np.mean(mrr_alias) * 100)
+
+        result_l.append(np.mean(hit_l) * 100)
+        result_l.append(np.mean(mrr_l) * 100)
 
         print(num_s)
         print(num_l)
