@@ -177,6 +177,7 @@ def forward(model, data, short_long = False):
         len_data = torch.sum(mask.float().unsqueeze(-1), 1)
         print(len_data.shape)
         print(targets.shape)
+        print(targets)
         return targets, model.compute_scores(seq_hidden, mask), len_data
     return targets, model.compute_scores(seq_hidden, mask)
 
