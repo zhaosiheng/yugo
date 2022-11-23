@@ -162,7 +162,7 @@ def trans_to_cpu(variable):
         return variable
 
 
-def forward(model, data):
+def forward(model, data, short_long = False):
     alias_inputs, adj, items, mask, targets, inputs = data
     alias_inputs = trans_to_cuda(alias_inputs).long()
     items = trans_to_cuda(items).long()
@@ -173,11 +173,16 @@ def forward(model, data):
     hidden = model(items, adj, mask, inputs)
     get = lambda index: hidden[index][alias_inputs[index]]
     seq_hidden = torch.stack([get(i) for i in torch.arange(len(alias_inputs)).long()])
+    if short_long == True:
+        len = seq_hidden.shape[1]
+        print(len.shape)
+        print(len)
     return targets, model.compute_scores(seq_hidden, mask)
 
 
 def train_test(model, train_data, test_data):
     print('start training: ', datetime.datetime.now())
+    '''
     model.train()
     total_loss = 0.0
     train_loader = torch.utils.data.DataLoader(train_data, num_workers=4, batch_size=model.batch_size,
@@ -192,7 +197,7 @@ def train_test(model, train_data, test_data):
         total_loss += loss
     print('\tLoss:\t%.3f' % total_loss)
     model.scheduler.step()
-
+'''
     print('start predicting: ', datetime.datetime.now())
     model.eval()
     test_loader = torch.utils.data.DataLoader(test_data, num_workers=4, batch_size=model.batch_size,
@@ -201,7 +206,7 @@ def train_test(model, train_data, test_data):
     hit, mrr = [], []
     hit_alias, mrr_alias = [], []
     for data in test_loader:
-        targets, scores = forward(model, data)
+        targets, scores = forward(model, data, short_long=model.opt.s_l)
         sub_scores = scores.topk(20)[1]
         sub_scores_alias = scores.topk(10)[1]
         sub_scores = trans_to_cpu(sub_scores).detach().numpy()
