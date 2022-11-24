@@ -132,8 +132,8 @@ def main():
                 best_result_l[1] = mrr_l
                 best_epoch_l[1] = epoch
                 flag = 1
-                print('mrr=',mrr)
-                print('best rs=',best_result[1])
+                print('mrr=',mrr_l)
+                print('best rs=',best_result_l[1])
                 
             if hit_alias_l >= best_result_l[2]:
                 best_result_l[2] = hit_alias_l
@@ -148,7 +148,7 @@ def main():
             print('\tRecall@20:\t%.4f\tMMR@20:\t%.4f' % (hit_l, mrr_l))
             print('Best Result:')
             print('\tRecall@20:\t%.4f\tMMR@20:\t%.4f\tEpoch:\t%d,\t%d' % (
-                best_result_l[0], best_result[1], best_epoch_l[0], best_epoch_l[1]))
+                best_result_l[0], best_result_l[1], best_epoch_l[0], best_epoch_l[1]))
             
             print('Current Result:')
             print('\tRecall@10:\t%.4f\tMMR@10:\t%.4f' % (hit_alias_l, mrr_alias_l))
