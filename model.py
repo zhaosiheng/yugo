@@ -280,8 +280,9 @@ def trans_to_cpu(variable):
         return variable
 
 
-def forward(model, data, epoch):
+def forward(model, data, epoch, short_long = False):
     alias_inputs, adj, items, mask, targets, inputs = data
+    len_data = torch.sum(mask.float().unsqueeze(-1), 1).squeeze(-1)
     alias_inputs = trans_to_cuda(alias_inputs).long()
     items = trans_to_cuda(items).long()
     adj = trans_to_cuda(adj).float()
@@ -291,6 +292,8 @@ def forward(model, data, epoch):
     hidden = model(items, adj, mask, inputs)
     get = lambda index: hidden[index][alias_inputs[index]]
     seq_hidden = torch.stack([get(i) for i in torch.arange(len(alias_inputs)).long()])
+    if short_long == True:
+        return targets, model.compute_scores(seq_hidden, mask, inputs, epoch), len_data
     return targets, model.compute_scores(seq_hidden, mask, inputs, epoch)
 
 
@@ -315,6 +318,66 @@ def train_test(model, train_data, test_data, epoch):
     model.eval()
     test_loader = torch.utils.data.DataLoader(test_data, num_workers=4, batch_size=model.batch_size,
                                               shuffle=False, pin_memory=True)
+    
+    if model.opt.s_l==True:
+        result = []
+        hit, mrr = [], []
+        hit_alias, mrr_alias = [], []
+        
+        hit_l, mrr_l = [], []
+        hit_alias_l, mrr_alias_l = [], []
+        for data in test_loader:
+            targets, scores, len_data = forward(model, data, epoch, short_long=model.opt.s_l)
+            sub_scores = scores.topk(20)[1]
+            sub_scores_alias = scores.topk(10)[1]
+            sub_scores = trans_to_cpu(sub_scores).detach().numpy()
+            sub_scores_alias = trans_to_cpu(sub_scores_alias).detach().numpy()
+            targets = targets.numpy()
+            len_data = len_data.numpy()
+            for score, target, mask, len_ in zip(sub_scores, targets, test_data.mask, len_data):
+                #@20
+                if len_<=5:
+                    hit.append(np.isin(target - 1, score))
+                    if len(np.where(score == target - 1)[0]) == 0:
+                        mrr.append(0)
+                    else:
+                        mrr.append(1 / (np.where(score == target - 1)[0][0] + 1))
+                else:
+                    hit_l.append(np.isin(target - 1, score))
+                    if len(np.where(score == target - 1)[0]) == 0:
+                        mrr_l.append(0)
+                    else:
+                        mrr_l.append(1 / (np.where(score == target - 1)[0][0] + 1))
+
+                    
+            for score, target, mask in zip(sub_scores_alias, targets, test_data.mask):
+                #@10
+                if len_<=5:
+                    hit_alias.append(np.isin(target - 1, score))
+                    if len(np.where(score == target - 1)[0]) == 0:
+                        mrr_alias.append(0)
+                    else:
+                        mrr_alias.append(1 / (np.where(score == target - 1)[0][0] + 1))
+                else:
+                    hit_alias_l.append(np.isin(target - 1, score))
+                    if len(np.where(score == target - 1)[0]) == 0:
+                        mrr_alias_l.append(0)
+                    else:
+                        mrr_alias_l.append(1 / (np.where(score == target - 1)[0][0] + 1))
+
+        result.append(np.mean(hit) * 100)
+        result.append(np.mean(mrr) * 100)
+        
+        result.append(np.mean(hit_alias) * 100)
+        result.append(np.mean(mrr_alias) * 100)
+
+        result.append(np.mean(hit_l) * 100)
+        result.append(np.mean(mrr_l) * 100)
+
+        result.append(np.mean(hit_alias_l) * 100)
+        result.append(np.mean(mrr_alias_l) * 100)
+
+        return result
     result = []
     hit, mrr, hit_alias, mrr_alias = [], [], [], []
     for data in test_loader:
