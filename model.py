@@ -183,8 +183,8 @@ class CombineGraph(Module):
         #w[hl||hg]
         #select = torch.matmul(torch.cat([select, zr], -1), self.yogo)/ torch.sum(mask, 1)+select
         
-        log1_5 = torch.log2(log)/0.58 + 1
-        select = torch.matmul(torch.cat([select, zr], -1), self.yogo)/log1_5+select
+        log1_5 = torch.log2(log) + 1
+        select = torch.matmul(torch.cat([select, zr], -1), self.yogo)/2+select
 
            
 
