@@ -44,7 +44,7 @@ parser.add_argument('--t0', type=float, default=1)
 parser.add_argument('--te', type=float, default=1)
 parser.add_argument('--t_t', type=float, default=1)
 
-parser.add_argument('--s_l', type=bool, default=True)
+parser.add_argument('--s_l', action='store_true', default=False)
 parser.add_argument('--t', type=float, default=1.0)
 
 
