@@ -49,7 +49,7 @@ class CombineGraph(Module):
         self.Q_4 = nn.Parameter(torch.Tensor(self.dim * 2 + 1, self.dim))
         self.P_4 = nn.Parameter(torch.Tensor(self.dim, 1))
         '''
-        self.yogo = nn.Parameter(torch.Tensor(self.dim * 2, self.dim))
+        self.yogo = nn.Parameter(torch.Tensor(self.dim * 3, self.dim))
         # Parameters
         self.w_1 = nn.Parameter(torch.Tensor(2 * self.dim, self.dim))
         self.w_2 = nn.Parameter(torch.Tensor(self.dim, 1))
@@ -181,7 +181,7 @@ class CombineGraph(Module):
         beta = beta * mask
         select = torch.sum(beta * hidden, 1)
         #w[hl||hg]
-        #select = torch.matmul(torch.cat([select, zr], -1), self.yogo)/ torch.sum(mask, 1)+select
+        select = torch.matmul(torch.cat([torch.cat([select, hs], -1), zr], -1), self.yogo)+select
         
         log1_5 = torch.log2(log) + 1
         #select = torch.matmul(torch.cat([select, zr], -1), self.yogo)+select
