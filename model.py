@@ -184,7 +184,7 @@ class CombineGraph(Module):
         #select = torch.matmul(torch.cat([select, zr], -1), self.yogo)/ torch.sum(mask, 1)+select
         
         log1_5 = torch.log2(log) + 1
-        select = torch.matmul(torch.cat([select, zr], -1), self.yogo)*torch.sum(mask, 1)/2+select
+        select = self.leakyrelu(torch.matmul(torch.cat([select, zr], -1), self.yogo))+select
 
            
 
