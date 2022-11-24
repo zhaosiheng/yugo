@@ -219,9 +219,10 @@ class CombineGraph(Module):
         # sum
         # sum_item_emb = torch.sum(item_emb, 1)
         
-        sum_item_emb = sum_item_emb.unsqueeze(-2)
+        sum_item_emb = sum_item_emb
         for i in range(self.hop):
-            session_info.append(sum_item_emb.repeat(1, entity_vectors[i].shape[1], 1))
+            #session_info.append(sum_item_emb.repeat(1, entity_vectors[i].shape[1], 1))
+            session_info.append(sum_item_emb)
 
         for n_hop in range(self.hop):
             entity_vectors_next_iter = []
@@ -233,15 +234,16 @@ class CombineGraph(Module):
                                     masks=None,
                                     batch_size=batch_size,
                                     neighbor_weight=weight_vectors[hop].view(batch_size, -1, self.sample_num),
-                                    extra_vector=session_info[hop])
+                                    extra_vector=session_info[hop],
+                                    t = self.opt.t)
                 entity_vectors_next_iter.append(vector)
             entity_vectors = entity_vectors_next_iter
 
-        h_global = entity_vectors[0].view(batch_size, seqs_len, self.dim)
+        h_global = entity_vectors[0]
         # combine
         h_local = F.dropout(h_local, self.dropout_local, training=self.training)
         h_global = F.dropout(h_global, self.dropout_global, training=self.training)
-        output = h_local + h_global
+        output = h_local + h_global / mask_item.sum(-1).unsqueeze(-1).unsqueeze(-1)
 
         return output
 
