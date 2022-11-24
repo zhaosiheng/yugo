@@ -49,8 +49,8 @@ class CombineGraph(Module):
         self.Q_4 = nn.Parameter(torch.Tensor(self.dim * 2 + 1, self.dim))
         self.P_4 = nn.Parameter(torch.Tensor(self.dim, 1))
         '''
-        self.yogo = nn.Parameter(torch.Tensor(self.dim * 3, self.dim))
-        self.yogo2 = nn.Parameter(torch.Tensor(self.dim * 3, self.dim))
+        self.yogo = nn.Parameter(torch.Tensor(self.dim * 2, self.dim))
+        self.yogo2 = nn.Parameter(torch.Tensor(self.dim * 2, self.dim))
         # Parameters
         self.w_1 = nn.Parameter(torch.Tensor(2 * self.dim, self.dim))
         self.w_2 = nn.Parameter(torch.Tensor(self.dim, 1))
