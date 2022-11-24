@@ -101,6 +101,8 @@ def main():
                 best_result[1] = mrr
                 best_epoch[1] = epoch
                 flag = 1
+                print('mrr=',mrr)
+                print('best rs=',best_result[1])
                 
             if hit_alias >= best_result[2]:
                 best_result[2] = hit_alias
