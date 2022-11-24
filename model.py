@@ -224,11 +224,11 @@ def train_test(model, train_data, test_data):
                     if len(np.where(score == target - 1)[0]) == 0:
                         mrr.append(0)
                     else:
-                        mrr_l.append(1 / (np.where(score == target - 1)[0][0] + 1))
+                        mrr.append(1 / (np.where(score == target - 1)[0][0] + 1))
                 else:
                     hit_l.append(np.isin(target - 1, score))
                     if len(np.where(score == target - 1)[0]) == 0:
-                        mrr.append(0)
+                        mrr_l.append(0)
                     else:
                         mrr_l.append(1 / (np.where(score == target - 1)[0][0] + 1))
 
