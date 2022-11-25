@@ -46,7 +46,7 @@ parser.add_argument('--t_t', type=float, default=1)
 
 parser.add_argument('--s_l', action='store_true', default=False)
 parser.add_argument('--t', type=float, default=1.0)
-
+parser.add_argument('--dp', type=float, default=0.0)
 
 
 opt = parser.parse_args()
