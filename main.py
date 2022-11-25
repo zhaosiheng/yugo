@@ -53,7 +53,7 @@ opt = parser.parse_args()
 
 
 def main():
-    init_seed(2020)
+    init_seed(1000)
 
     if opt.dataset == 'diginetica':
         num_node = 43098
