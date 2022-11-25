@@ -187,7 +187,7 @@ class CombineGraph(Module):
         #select = s_r +select
         zrs = torch.matmul(torch.cat([select, zr], -1), self.yogo)
         gate = torch.sigmoid(torch.matmul(zrs, self.gate_zr) + torch.matmul(select, self.gate_s))
-        select = gate * select +(1-gate) * zrs
+        select = (1+gate) * select +(1-gate) * zrs
 
            
 
