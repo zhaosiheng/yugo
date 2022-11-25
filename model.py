@@ -50,7 +50,8 @@ class CombineGraph(Module):
         self.P_4 = nn.Parameter(torch.Tensor(self.dim, 1))
         '''
         self.yogo = nn.Parameter(torch.Tensor(self.dim * 2, self.dim))
-        self.yogo2 = nn.Parameter(torch.Tensor(self.dim * 2, self.dim))
+        self.gate_zr = nn.Parameter(torch.Tensor(self.dim * 1, self.dim))
+        self.gate_s = nn.Parameter(torch.Tensor(self.dim * 1, self.dim))
         # Parameters
         self.w_1 = nn.Parameter(torch.Tensor(2 * self.dim, self.dim))
         self.w_2 = nn.Parameter(torch.Tensor(self.dim, 1))
@@ -184,8 +185,9 @@ class CombineGraph(Module):
         #w[hl||hg]
         #s_r = F.dropout(torch.matmul(torch.cat([select, zr], -1), self.yogo), self.opt.dp, training=self.training)
         #select = s_r +select
-        
-        select = torch.matmul(torch.cat([select, zr], -1), self.yogo)+select
+        zrs = torch.matmul(torch.cat([select, zr], -1), self.yogo)
+        gate = torch.sigmoid(torch.matmul(self.gate_zr, zrs) + torch.matmul(self.gate_s, select))
+        select = gate * select +(1-gate) * zrs
 
            
 
