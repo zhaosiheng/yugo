@@ -183,7 +183,7 @@ class CombineGraph(Module):
         select = torch.sum(beta * hidden, 1)
         #w[hl||hg]
         #s_r = F.dropout(torch.matmul(torch.cat([select, zr], -1), self.yogo), self.opt.dp, training=self.training)
-        select = s_r +select
+        #select = s_r +select
         
         select = torch.matmul(torch.cat([select, zr], -1), self.yogo)+select
 
