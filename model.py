@@ -178,9 +178,8 @@ class CombineGraph(Module):
         
         zr = hidden[torch.arange(batch_size).long(), torch.sum(mask, 1).squeeze().long() - 1]
         
-        nh = torch.sigmoid(self.glu1(nh) + self.glu2(hs) + 
-        #self.glu3(zr.unsqueeze(-2))
-        )
+        #nh = torch.sigmoid(self.glu1(nh) + self.glu2(hs) + self.glu3(zr.unsqueeze(-2)))
+        nh = torch.sigmoid(self.glu1(nh) + self.glu2(hs) )
         beta = torch.matmul(nh, self.w_2)
         beta = beta * mask
         select = torch.sum(beta * hidden, 1)
