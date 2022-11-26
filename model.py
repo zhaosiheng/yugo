@@ -187,10 +187,10 @@ class CombineGraph(Module):
         #s_r = F.dropout(torch.matmul(torch.cat([select, zr], -1), self.yogo), self.opt.dp, training=self.training)
         #select = s_r +select
         #gate+dropout
-        #zrs = torch.matmul(torch.cat([select, zr], -1), self.yogo)
-        #zrs = F.dropout(zrs, self.opt.dp, training=self.training)
-        #gate = torch.sigmoid(torch.matmul(zrs, self.gate_zr) + torch.matmul(select, self.gate_s))
-        #select = (1+gate) * select +(1-gate) * zrs
+        zrs = torch.matmul(torch.cat([select, zr], -1), self.yogo)
+        zrs = F.dropout(zrs, self.opt.dp, training=self.training)
+        gate = torch.sigmoid(torch.matmul(zrs, self.gate_zr) + torch.matmul(select, self.gate_s))
+        select = (1+gate) * select +(1-gate) * zrs
 
            
 
