@@ -38,7 +38,8 @@ class SGCN(nn.Module):
 
 
         A = adj[:,1]/2 + adj[:,0]
-        print(A.shape)
+        D = torch.sum(A, -1)
+        print(D.shape)
 
         a_input = (h.repeat(1, 1, N).view(batch_size, N * N, self.dim)
                    * h.repeat(1, N, 1)).view(batch_size, N, N, self.dim)
