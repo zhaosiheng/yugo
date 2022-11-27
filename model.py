@@ -119,8 +119,8 @@ class CombineGraph(Module):
         '''(3)'''
         pos_emb = self.pos_emb[:, :len, :].view(self.opt.pos_num, len * self.dim)
         log = torch.sum(mask, 1)
-        #log = torch.log2(log)+1
-        log = torch.log2(log+1)
+        log = torch.log2(log)+1
+        
         #hz = torch.sum(self.embedding(inputs) * mask, -2) / torch.sum(mask, 1)
         hz = self.embedding(inputs) * mask
         #h = torch.matmul(self.leakyrelu(torch.matmul(torch.cat((hs, mask.squeeze(-1).sum(-1).unsqueeze(-1)), -1), self.Q)), self.P)
