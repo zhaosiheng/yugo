@@ -39,6 +39,7 @@ class SGCN(nn.Module):
 
         A = adj[:,1]/2 + adj[:,0]
         D = torch.sum(A, -1).diag_embed().rsqrt()
+        D = torch.where(torch.isinf(D), torch.full_like(D, 0), D)
         
         print(D[0])
 
