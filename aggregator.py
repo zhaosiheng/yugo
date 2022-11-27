@@ -25,11 +25,11 @@ class SGCN(nn.Module):
 
         self.hop = hop
         self.range = hop
-        #self.a_list = torch.nn.ParameterList([nn.Parameter(torch.Tensor(self.dim, 1)) for i in range(self.range)])
+        self.a_list = torch.nn.ParameterList([nn.Parameter(torch.Tensor(self.dim, 1)) for i in range(self.range)])
 
-        #self.bias = nn.Parameter(torch.Tensor(self.dim))
+        self.bias = nn.Parameter(torch.Tensor(self.dim))
 
-        #self.leakyrelu = nn.LeakyReLU(alpha)
+        self.leakyrelu = nn.LeakyReLU(alpha)
 
     def forward(self, hidden, adj, mask_item=None):
         h = hidden
