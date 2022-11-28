@@ -256,7 +256,7 @@ class CombineGraph(Module):
         h_global = F.dropout(h_global, self.dropout_global, training=self.training)
         output = h_local + h_global / mask_item.sum(-1).unsqueeze(-1).unsqueeze(-1)
         '''
-        return h_local
+        return output
 
 
 def SSL(sess_emb_hgnn, sess_emb_lgcn):
