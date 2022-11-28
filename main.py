@@ -44,7 +44,7 @@ parser.add_argument('--t0', type=float, default=0.5)
 parser.add_argument('--te', type=float, default=100)
 parser.add_argument('--seed', type=int, default=2020)
 
-parser.add_argument('--dp', type=float, default=0)
+parser.add_argument('--dp', type=float, default=0.0)
 
 
 opt = parser.parse_args()
