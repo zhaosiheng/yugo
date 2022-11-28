@@ -17,6 +17,36 @@ class Aggregator(nn.Module):
         pass
 
 
+class SGCN(nn.Module):
+    def __init__(self, dim, alpha, dropout=0.,hop=1, name=None):
+        super(SGCN, self).__init__()
+        self.dim = dim
+        self.dropout = dropout
+
+        self.hop = hop
+        self.range = hop
+        self.a_list = torch.nn.ParameterList([nn.Parameter(torch.Tensor(self.dim, 1)) for i in range(self.range)])
+
+        self.bias = nn.Parameter(torch.Tensor(self.dim))
+
+        self.leakyrelu = nn.LeakyReLU(alpha)
+
+    def forward(self, hidden, adj, mask_item=None):
+        h = hidden
+        batch_size = h.shape[0]
+        N = h.shape[1]
+
+
+        A = adj[:,1]/2 + adj[:,0]
+        D = torch.sum(A, -1).diag_embed().rsqrt()
+        D = torch.where(torch.isinf(D), torch.full_like(D, 0), D)
+        
+        output = torch.matmul(D, hidden)
+        output = torch.matmul(A, output)
+        output = torch.matmul(D, output)
+
+        return output
+        
 class LocalAggregator(nn.Module):
     def __init__(self, dim, alpha, dropout=0.,hop=1, name=None):
         super(LocalAggregator, self).__init__()

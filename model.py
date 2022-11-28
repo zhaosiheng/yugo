@@ -4,7 +4,7 @@ import numpy as np
 import torch
 from torch import nn
 from tqdm import tqdm
-from aggregator import LocalAggregator, GlobalAggregator
+from aggregator import LocalAggregator, GlobalAggregator, SGCN
 from torch.nn import Module, Parameter
 import torch.nn.functional as F
 
@@ -26,7 +26,7 @@ class CombineGraph(Module):
         
 
         # Aggregator
-        self.local_agg = LocalAggregator(self.dim, self.opt.alpha, dropout=opt.long_edge_dropout, hop=opt.hop)
+        self.local_agg = SGCN(self.dim, self.opt.alpha, dropout=opt.long_edge_dropout, hop=opt.hop)
         self.global_agg = []
         for i in range(self.hop):
             if opt.activate == 'relu':
@@ -48,6 +48,10 @@ class CombineGraph(Module):
         '''
         self.Q_4 = nn.Parameter(torch.Tensor(self.dim * 2 + 1, self.dim))
         self.P_4 = nn.Parameter(torch.Tensor(self.dim, 1))
+
+        self.yogo = nn.Parameter(torch.Tensor(self.dim * 2, self.dim))
+        self.gate_zr = nn.Parameter(torch.Tensor(self.dim * 1, self.dim))
+        self.gate_s = nn.Parameter(torch.Tensor(self.dim * 1, self.dim))
         # Parameters
         self.w_1 = nn.Parameter(torch.Tensor(2 * self.dim, self.dim))
         self.w_2 = nn.Parameter(torch.Tensor(self.dim, 1))
@@ -159,6 +163,13 @@ class CombineGraph(Module):
         beta = beta * mask
         select = torch.sum(beta * hidden, 1)
 
+        zr = hidden[torch.arange(batch_size).long(), torch.sum(mask, 1).squeeze().long() - 1]
+        #gate+dropout
+        zrs = torch.matmul(torch.cat([select, zr], -1), self.yogo)
+        zrs = F.dropout(zrs, self.opt.dp, training=self.training)
+        gate = torch.sigmoid(torch.matmul(zrs, self.gate_zr) + torch.matmul(select, self.gate_s))
+        select = (1+gate) * select +(1-gate) * zrs
+
         b = self.embedding.weight[1:]  # n_nodes x latent_size
         scores = torch.matmul(select, b.transpose(1, 0))
         return scores
@@ -215,7 +226,7 @@ class CombineGraph(Module):
         # combine
         h_local = F.dropout(h_local, self.dropout_local, training=self.training)
         h_global = F.dropout(h_global, self.dropout_global, training=self.training)
-        output = h_local 
+        output = h_local + h_global
 
         return output
 
