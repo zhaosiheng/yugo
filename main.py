@@ -66,8 +66,8 @@ def main():
     elif opt.dataset == 'Tmall':
         num_node = 40728
         opt.n_iter = 1
-        opt.dropout_gcn = 0.6
-        opt.dropout_local = 0.5
+        #opt.dropout_gcn = 0.6
+        #opt.dropout_local = 0.5
     else:
         num_node = 310
 
