@@ -235,8 +235,8 @@ class CombineGraph(Module):
         star_0 = torch.matmul(session_info[0], self.star_1)
         star_weight = torch.matmul(star_s, star_0.transpose(-2,-1)) / self.dim**0.5
         star_weight = torch.softmax(star_weight, -1)
-        print(star_weight.shape)
-        print(h_global.shape)
+        
+        print(sum_item_emb.shape)
         s_global = torch.sum(star_weight * h_global, -1)
         
         output = h_local + s_global
