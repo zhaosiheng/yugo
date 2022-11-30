@@ -238,7 +238,7 @@ class CombineGraph(Module):
         print(star_weight.shape)
         s_global = star_weight * h_global
         #s_global = torch.sum(star_weight * h_global, -1)
-        print(s_global.shape)
+        print(torch.sum(s_global,-2).shape)
         output = h_local + s_global
 
         return output
