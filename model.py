@@ -52,6 +52,9 @@ class CombineGraph(Module):
         self.yogo = nn.Parameter(torch.Tensor(self.dim * 2, self.dim))
         self.gate_zr = nn.Parameter(torch.Tensor(self.dim * 1, self.dim))
         self.gate_s = nn.Parameter(torch.Tensor(self.dim * 1, self.dim))
+        
+        self.star_1 = nn.Parameter(torch.Tensor(self.dim * 1, self.dim))
+        self.star_2 = nn.Parameter(torch.Tensor(self.dim * 1, self.dim))
         # Parameters
         self.w_1 = nn.Parameter(torch.Tensor(2 * self.dim, self.dim))
         self.w_2 = nn.Parameter(torch.Tensor(self.dim, 1))
@@ -223,10 +226,18 @@ class CombineGraph(Module):
             entity_vectors = entity_vectors_next_iter
 
         h_global = entity_vectors[0].view(batch_size, seqs_len, self.dim)
+
         # combine
         h_local = F.dropout(h_local, self.dropout_local, training=self.training)
         h_global = F.dropout(h_global, self.dropout_global, training=self.training)
-        output = h_local + h_global
+        #
+        star_s = torch.matmul(h_global, self.star_1)
+        star_0 = torch.matmul(session_info[0], self.star_1)
+        star_weight = torch.matmul(star_s, star_0.transpose(-2,-1)) / self.dim**0.5
+        star_weight = torch.softmax(star_weight, -1)
+        s_global = torch.sum(star_weight * h_global, -1)
+        
+        output = h_local + s_global
 
         return output
 
