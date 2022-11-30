@@ -26,7 +26,7 @@ class CombineGraph(Module):
         
 
         # Aggregator
-        self.local_agg = SGCN(self.dim, self.opt.alpha, dropout=opt.long_edge_dropout, hop=opt.hop)
+        self.local_agg = LocalAggregator(self.dim, self.opt.alpha, dropout=opt.long_edge_dropout, hop=opt.hop)
         self.global_agg = []
         for i in range(self.hop):
             if opt.activate == 'relu':
