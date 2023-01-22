@@ -92,18 +92,6 @@ class GlobalAggregator(nn.Module):
             neighbor_vector = neighbor_vector.view(batch_size, -1, self.dim)
             neighbor_weight = neighbor_weight.view(batch_size, -1)
             neighbor_vector_list = []
-
-        '''
-            alpha = torch.matmul(extra_vector.unsqueeze(-2).repeat(1, neighbor_vector.shape[1], 1)*neighbor_vector, self.w_1)
-            #alpha = torch.matmul(torch.cat([extra_vector.unsqueeze(-2).repeat(1, neighbor_vector.shape[1], 1)*neighbor_vector, neighbor_weight.unsqueeze(-1)], -1), self.w_1)
-            alpha = F.leaky_relu(alpha, negative_slope=0.2)
-            alpha = torch.matmul(alpha, self.w_2).squeeze(-1) * t
-            mask = -9e15 * torch.ones_like(alpha)
-            alpha = torch.where(neighbor_weight==0, mask,alpha)
-            alpha = torch.softmax(alpha, -1).unsqueeze(-1)
-            neighbor_vector = torch.sum(alpha * neighbor_vector, dim=-2).unsqueeze(-2)
-        '''
-            
             for i in range(4):
                 alpha = torch.matmul(extra_vector.unsqueeze(-2).repeat(1, neighbor_vector.shape[1], 1)*neighbor_vector, self.q_list[i])
                 alpha = F.leaky_relu(alpha, negative_slope=0.2)
@@ -124,3 +112,13 @@ class GlobalAggregator(nn.Module):
         output = self.act(output)
         return output #.unsqueeze(-2).repeat(1, seqs_len, 1)
 
+        '''
+            alpha = torch.matmul(extra_vector.unsqueeze(-2).repeat(1, neighbor_vector.shape[1], 1)*neighbor_vector, self.w_1)
+            #alpha = torch.matmul(torch.cat([extra_vector.unsqueeze(-2).repeat(1, neighbor_vector.shape[1], 1)*neighbor_vector, neighbor_weight.unsqueeze(-1)], -1), self.w_1)
+            alpha = F.leaky_relu(alpha, negative_slope=0.2)
+            alpha = torch.matmul(alpha, self.w_2).squeeze(-1) * t
+            mask = -9e15 * torch.ones_like(alpha)
+            alpha = torch.where(neighbor_weight==0, mask,alpha)
+            alpha = torch.softmax(alpha, -1).unsqueeze(-1)
+            neighbor_vector = torch.sum(alpha * neighbor_vector, dim=-2).unsqueeze(-2)
+        '''
