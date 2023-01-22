@@ -91,6 +91,7 @@ class GlobalAggregator(nn.Module):
             seqs_len = self_vectors.shape[1]
             neighbor_vector = neighbor_vector.view(batch_size, -1, self.dim)
             neighbor_weight = neighbor_weight.view(batch_size, -1)
+            neighbor_vector_list = []
 
         '''
             alpha = torch.matmul(extra_vector.unsqueeze(-2).repeat(1, neighbor_vector.shape[1], 1)*neighbor_vector, self.w_1)
@@ -102,7 +103,7 @@ class GlobalAggregator(nn.Module):
             alpha = torch.softmax(alpha, -1).unsqueeze(-1)
             neighbor_vector = torch.sum(alpha * neighbor_vector, dim=-2).unsqueeze(-2)
         '''
-            neighbor_vector_list = []
+            
             for i in range(4):
                 alpha = torch.matmul(extra_vector.unsqueeze(-2).repeat(1, neighbor_vector.shape[1], 1)*neighbor_vector, self.q_list[i])
                 alpha = F.leaky_relu(alpha, negative_slope=0.2)
