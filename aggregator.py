@@ -100,7 +100,7 @@ class GlobalAggregator(nn.Module):
                 alpha = torch.where(neighbor_weight==0, mask,alpha)
                 alpha = torch.softmax(alpha, -1).unsqueeze(-1)
                 neighbor_vector_list.append(  torch.sum(alpha * neighbor_vector, dim=-2).unsqueeze(-2)  )
-            neighbor_vector = torch.cat(neighbor_vector_list).sum(dim=-1)
+            neighbor_vector = torch.cat(neighbor_vector_list, -1)
 
         else:
             neighbor_vector = torch.mean(neighbor_vector, dim=2)
