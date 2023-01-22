@@ -76,9 +76,13 @@ class GlobalAggregator(nn.Module):
         self.dim = dim
 
         #self.w_1 = nn.Parameter(torch.Tensor(self.dim + 1, self.dim))
+        self.q_list = torch.nn.ParameterList([nn.Parameter(torch.Tensor(self.dim, self.dim)) for i in range(4)])
+        self.w_list = torch.nn.ParameterList([nn.Parameter(torch.Tensor(self.dim, 1)) for i in range(4)])
         self.w_1 = nn.Parameter(torch.Tensor(self.dim, self.dim))
         self.w_2 = nn.Parameter(torch.Tensor(self.dim, 1))
-        self.w_3 = nn.Parameter(torch.Tensor(self.dim, self.dim))
+
+
+        self.w_3 = nn.Parameter(torch.Tensor(self.dim * 4, self.dim))
         self.bias = nn.Parameter(torch.Tensor(self.dim))
 
     def forward(self, self_vectors, neighbor_vector, batch_size, masks, neighbor_weight, extra_vector=None, t=1.0):
@@ -88,6 +92,7 @@ class GlobalAggregator(nn.Module):
             neighbor_vector = neighbor_vector.view(batch_size, -1, self.dim)
             neighbor_weight = neighbor_weight.view(batch_size, -1)
 
+        '''
             alpha = torch.matmul(extra_vector.unsqueeze(-2).repeat(1, neighbor_vector.shape[1], 1)*neighbor_vector, self.w_1)
             #alpha = torch.matmul(torch.cat([extra_vector.unsqueeze(-2).repeat(1, neighbor_vector.shape[1], 1)*neighbor_vector, neighbor_weight.unsqueeze(-1)], -1), self.w_1)
             alpha = F.leaky_relu(alpha, negative_slope=0.2)
@@ -96,6 +101,18 @@ class GlobalAggregator(nn.Module):
             alpha = torch.where(neighbor_weight==0, mask,alpha)
             alpha = torch.softmax(alpha, -1).unsqueeze(-1)
             neighbor_vector = torch.sum(alpha * neighbor_vector, dim=-2).unsqueeze(-2)
+        '''
+            neighbor_vector_list = []
+            for i in range(4):
+                alpha = torch.matmul(extra_vector.unsqueeze(-2).repeat(1, neighbor_vector.shape[1], 1)*neighbor_vector, self.q_list[i])
+                alpha = F.leaky_relu(alpha, negative_slope=0.2)
+                alpha = torch.matmul(alpha, self.w_list[i]).squeeze(-1) * t
+                mask = -9e15 * torch.ones_like(alpha)
+                alpha = torch.where(neighbor_weight==0, mask,alpha)
+                alpha = torch.softmax(alpha, -1).unsqueeze(-1)
+                neighbor_vector_list.append(  torch.sum(alpha * neighbor_vector, dim=-2).unsqueeze(-2)  )
+            neighbor_vector = torch.cat(neighbor_vector_list).sum(dim=-1)
+
         else:
             neighbor_vector = torch.mean(neighbor_vector, dim=2)
         # self_vectors = F.dropout(self_vectors, 0.5, training=self.training)
