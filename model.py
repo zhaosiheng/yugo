@@ -272,6 +272,7 @@ def SSL(sess_emb_hgnn, sess_emb_lgcn):
 
 def cor_loss(q_list):
     loss = torch.tensor(0,dtype = torch.float)
+    print(q_list[0].shape)
     for i in range(4):
         for j in range(i+1, 4):
             x = q_list[i]
