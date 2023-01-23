@@ -276,7 +276,6 @@ def cor_loss(q_list):
         for j in range(i+1, 4):
             x = q_list[i].squeeze(1)
             y = q_list[j].squeeze(1)
-            print(x.shape)
             loss = loss + torch.cosine_similarity(x, y, dim=0)
     return loss
 
