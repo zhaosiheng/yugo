@@ -316,7 +316,7 @@ def train_test(model, train_data, test_data, epoch):
         model.optimizer.zero_grad()
         targets, scores = forward(model, data, epoch)
         targets = trans_to_cuda(targets).long()
-        loss = model.loss_function(scores, targets - 1) + cor_loss(self.global_agg.q_list)
+        loss = model.loss_function(scores, targets - 1) + cor_loss(model.global_agg.q_list)
         loss.backward()
         model.optimizer.step()
         total_loss += loss
