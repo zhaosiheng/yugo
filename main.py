@@ -47,6 +47,7 @@ parser.add_argument('--t_t', type=float, default=1)
 
 parser.add_argument('--t', type=float, default=1.0)
 
+parser.add_argument('--lamda', type=float, default=1)
 
 
 opt = parser.parse_args()
