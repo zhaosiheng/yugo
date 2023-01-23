@@ -76,8 +76,8 @@ class GlobalAggregator(nn.Module):
         self.dim = dim
 
         #self.w_1 = nn.Parameter(torch.Tensor(self.dim + 1, self.dim))
-        self.q_list = torch.nn.ParameterList([nn.Parameter(torch.Tensor(self.dim, self.dim)) for i in range(4)])
-        self.w_list = torch.nn.ParameterList([nn.Parameter(torch.Tensor(self.dim, 1)) for i in range(4)])
+        self.w_list = torch.nn.ParameterList([nn.Parameter(torch.Tensor(self.dim, self.dim)) for i in range(4)])
+        self.q_list = torch.nn.ParameterList([nn.Parameter(torch.Tensor(self.dim, 1)) for i in range(4)])
         self.w_1 = nn.Parameter(torch.Tensor(self.dim, self.dim))
         self.w_2 = nn.Parameter(torch.Tensor(self.dim, 1))
 
@@ -93,9 +93,9 @@ class GlobalAggregator(nn.Module):
             neighbor_weight = neighbor_weight.view(batch_size, -1)
             neighbor_vector_list = []
             for i in range(4):
-                alpha = torch.matmul(extra_vector.unsqueeze(-2).repeat(1, neighbor_vector.shape[1], 1)*neighbor_vector, self.q_list[i])
+                alpha = torch.matmul(extra_vector.unsqueeze(-2).repeat(1, neighbor_vector.shape[1], 1)*neighbor_vector, self.w_list[i])
                 alpha = F.leaky_relu(alpha, negative_slope=0.2)
-                alpha = torch.matmul(alpha, self.w_list[i]).squeeze(-1) * t
+                alpha = torch.matmul(alpha, self.q_list[i]).squeeze(-1) * t
                 mask = -9e15 * torch.ones_like(alpha)
                 alpha = torch.where(neighbor_weight==0, mask,alpha)
                 alpha = torch.softmax(alpha, -1).unsqueeze(-1)

@@ -9,6 +9,7 @@ from torch.nn import Module, Parameter
 import torch.nn.functional as F
 from pprint import pprint
 
+
 class CombineGraph(Module):
     def __init__(self, opt, num_node, adj_all, num):
         super(CombineGraph, self).__init__()
@@ -269,6 +270,14 @@ def SSL(sess_emb_hgnn, sess_emb_lgcn):
     con_loss = torch.sum(-torch.log(1e-8 + torch.sigmoid(pos)) - torch.log(1e-8 + (one - torch.sigmoid(neg1))))
     return con_loss
 
+def cor_loss(q_list):
+    for i in range(4):
+        for j in range(i+1, 4):
+            x = q_list[i]
+            y = q_list[j]
+            loss = loss + torch.cosine_similarity(x, y)
+    return loss
+
 def trans_to_cuda(variable):
     if torch.cuda.is_available():
         return variable.cuda()
@@ -307,7 +316,7 @@ def train_test(model, train_data, test_data, epoch):
         model.optimizer.zero_grad()
         targets, scores = forward(model, data, epoch)
         targets = trans_to_cuda(targets).long()
-        loss = model.loss_function(scores, targets - 1) 
+        loss = model.loss_function(scores, targets - 1) + cor_loss(self.global_agg.q_list)
         loss.backward()
         model.optimizer.step()
         total_loss += loss
