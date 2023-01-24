@@ -76,8 +76,8 @@ class GlobalAggregator(nn.Module):
         self.dim = dim
 
         #self.w_1 = nn.Parameter(torch.Tensor(self.dim + 1, self.dim))
-        self.w_list = torch.nn.ParameterList([nn.Parameter(torch.Tensor(self.dim, self.dim / 4)) for i in range(4)])
-        self.q_list = torch.nn.ParameterList([nn.Parameter(torch.Tensor(self.dim / 4, 1)) for i in range(4)])
+        self.w_list = torch.nn.ParameterList([nn.Parameter(torch.Tensor(self.dim, int( self.dim/4) )) for i in range(4)])
+        self.q_list = torch.nn.ParameterList([nn.Parameter(torch.Tensor(int( self.dim/4 ), 1)) for i in range(4)])
         self.w_1 = nn.Parameter(torch.Tensor(self.dim, self.dim))
         self.w_2 = nn.Parameter(torch.Tensor(self.dim, 1))
 
