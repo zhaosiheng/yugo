@@ -93,8 +93,8 @@ class GlobalAggregator(nn.Module):
             neighbor_weight = neighbor_weight.view(batch_size, -1)
             neighbor_vector_list = []
             tmp = extra_vector.unsqueeze(-2).repeat(1, neighbor_vector.shape[1], 1)*neighbor_vector
-            h_list = torch.chunk(tmp, 4, dim = 1)
-            nv_list = torch.chunk(neighbor_vector, 4, dim = 1)
+            h_list = torch.chunk(tmp, 4, dim = -1)
+            nv_list = torch.chunk(neighbor_vector, 4, dim = -1)
             print(neighbor_vector.shape)
             for i in range(4):
                 alpha = torch.matmul(h_list[i], self.w_list[i])
