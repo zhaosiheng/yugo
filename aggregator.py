@@ -76,13 +76,13 @@ class GlobalAggregator(nn.Module):
         self.dim = dim
 
         #self.w_1 = nn.Parameter(torch.Tensor(self.dim + 1, self.dim))
-        self.w_list = torch.nn.ParameterList([nn.Parameter(torch.Tensor(self.dim, self.dim)) for i in range(4)])
-        self.q_list = torch.nn.ParameterList([nn.Parameter(torch.Tensor(self.dim, 1)) for i in range(4)])
+        self.w_list = torch.nn.ParameterList([nn.Parameter(torch.Tensor(self.dim, self.dim / 4)) for i in range(4)])
+        self.q_list = torch.nn.ParameterList([nn.Parameter(torch.Tensor(self.dim / 4, 1)) for i in range(4)])
         self.w_1 = nn.Parameter(torch.Tensor(self.dim, self.dim))
         self.w_2 = nn.Parameter(torch.Tensor(self.dim, 1))
 
 
-        self.w_3 = nn.Parameter(torch.Tensor(self.dim * 4, self.dim))
+        self.w_3 = nn.Parameter(torch.Tensor(self.dim , self.dim))
         self.bias = nn.Parameter(torch.Tensor(self.dim))
 
     def forward(self, self_vectors, neighbor_vector, batch_size, masks, neighbor_weight, extra_vector=None, t=1.0):
