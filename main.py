@@ -44,7 +44,7 @@ parser.add_argument('--t0', type=float, default=1)
 parser.add_argument('--te', type=float, default=1)
 parser.add_argument('--t_t', type=float, default=1)
 
-
+parser.add_argument('--seed', type=int, default=1000)
 parser.add_argument('--t', type=float, default=1.0)
 
 parser.add_argument('--lamda', type=float, default=1)
@@ -54,7 +54,7 @@ opt = parser.parse_args()
 
 
 def main():
-    init_seed(2020)
+    init_seed(opt.seed)
 
     if opt.dataset == 'diginetica':
         num_node = 43098
