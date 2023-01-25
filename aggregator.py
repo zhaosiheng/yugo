@@ -91,7 +91,30 @@ class GlobalAggregator(nn.Module):
             seqs_len = self_vectors.shape[1]
             neighbor_vector = neighbor_vector.view(batch_size, -1, self.dim)
             neighbor_weight = neighbor_weight.view(batch_size, -1)
-            neighbor_vector_list = []
+            
+            alpha = torch.matmul(extra_vector.unsqueeze(-2).repeat(1, neighbor_vector.shape[1], 1)*neighbor_vector, self.w_1)
+            #alpha = torch.matmul(torch.cat([extra_vector.unsqueeze(-2).repeat(1, neighbor_vector.shape[1], 1)*neighbor_vector, neighbor_weight.unsqueeze(-1)], -1), self.w_1)
+            alpha = F.leaky_relu(alpha, negative_slope=0.2)
+            alpha = torch.matmul(alpha, self.w_2).squeeze(-1) * t
+            mask = -9e15 * torch.ones_like(alpha)
+            alpha = torch.where(neighbor_weight==0, mask,alpha)
+            alpha = torch.softmax(alpha, -1).unsqueeze(-1)
+            neighbor_vector = torch.sum(alpha * neighbor_vector, dim=-2).unsqueeze(-2)
+
+        else:
+            neighbor_vector = torch.mean(neighbor_vector, dim=2)
+        # self_vectors = F.dropout(self_vectors, 0.5, training=self.training)
+        #output = torch.cat([extra_vector.unsqueeze(-2), neighbor_vector], -1)
+        output = F.dropout(neighbor_vector, self.dropout, training=self.training)
+        output = torch.matmul(output, self.w_3)
+
+        output = self.act(output)
+        return output #.unsqueeze(-2).repeat(1, seqs_len, 1)
+
+        '''
+
+
+                        neighbor_vector_list = []
             tmp = extra_vector.unsqueeze(-2).repeat(1, neighbor_vector.shape[1], 1)*neighbor_vector
             h_list = torch.chunk(tmp, 4, dim = -1)
             nv_list = torch.chunk(neighbor_vector, 4, dim = -1)
@@ -105,24 +128,4 @@ class GlobalAggregator(nn.Module):
                 alpha = torch.softmax(alpha, -1).unsqueeze(-1)
                 neighbor_vector_list.append(  torch.sum(alpha * nv_list[i], dim=-2).unsqueeze(-2)  )
             neighbor_vector = torch.cat(neighbor_vector_list, -1)
-
-        else:
-            neighbor_vector = torch.mean(neighbor_vector, dim=2)
-        # self_vectors = F.dropout(self_vectors, 0.5, training=self.training)
-        #output = torch.cat([extra_vector.unsqueeze(-2), neighbor_vector], -1)
-        output = F.dropout(neighbor_vector, self.dropout, training=self.training)
-        output = torch.matmul(output, self.w_3)
-
-        output = self.act(output)
-        return output #.unsqueeze(-2).repeat(1, seqs_len, 1)
-
-        '''
-            alpha = torch.matmul(extra_vector.unsqueeze(-2).repeat(1, neighbor_vector.shape[1], 1)*neighbor_vector, self.w_1)
-            #alpha = torch.matmul(torch.cat([extra_vector.unsqueeze(-2).repeat(1, neighbor_vector.shape[1], 1)*neighbor_vector, neighbor_weight.unsqueeze(-1)], -1), self.w_1)
-            alpha = F.leaky_relu(alpha, negative_slope=0.2)
-            alpha = torch.matmul(alpha, self.w_2).squeeze(-1) * t
-            mask = -9e15 * torch.ones_like(alpha)
-            alpha = torch.where(neighbor_weight==0, mask,alpha)
-            alpha = torch.softmax(alpha, -1).unsqueeze(-1)
-            neighbor_vector = torch.sum(alpha * neighbor_vector, dim=-2).unsqueeze(-2)
         '''

@@ -80,7 +80,7 @@ class CombineGraph(Module):
         # return self.adj_all[target.view(-1)][:, index], self.num[target.view(-1)][:, index]
         return self.adj_all[target.view(-1)], self.num[target.view(-1)]
 
-    def compute_scores(self, hidden, mask, inputs, epoch):
+    def compute_scores(self, hidden, mask, inputs, g_h):
         mask = mask.float().unsqueeze(-1)
 
         batch_size = hidden.shape[0]
@@ -141,13 +141,6 @@ class CombineGraph(Module):
         pos_emb = (de_tor * num_tor).view(batch_size, len, self.dim)
         
         #pos_emb = torch.matmul(gama, pos_emb).view(batch_size, len, self.dim)
-        if epoch==6:
-            exdata = torch.cat([log, gama], -1)
-            exdata = exdata.cpu().detach().numpy().tolist()
-            txt = open("data.txt", 'a+')
-            for i in exdata:
-                pprint(i, txt)
-            txt.close()
         
         self.gama = gama
         
@@ -247,7 +240,7 @@ class CombineGraph(Module):
         h_local = F.dropout(h_local, self.dropout_local, training=self.training)
         s_global = F.dropout(s_global, self.dropout_global, training=self.training)
         output =  h_local + s_global ###/ mask_item.sum(-1).unsqueeze(-1).unsqueeze(-1) ################
-        return output
+        return output,s_global
 
 
 def SSL(sess_emb_hgnn, sess_emb_lgcn):
@@ -301,10 +294,10 @@ def forward(model, data, epoch):
     mask = trans_to_cuda(mask).long()
     inputs = trans_to_cuda(inputs).long()
 
-    hidden = model(items, adj, mask, inputs)
+    hidden,g_hidden = model(items, adj, mask, inputs)
     get = lambda index: hidden[index][alias_inputs[index]]
     seq_hidden = torch.stack([get(i) for i in torch.arange(len(alias_inputs)).long()])
-    return targets, model.compute_scores(seq_hidden, mask, inputs, epoch)
+    return targets, model.compute_scores(seq_hidden, mask, inputs, g_hidden)
 
 
 def train_test(model, train_data, test_data, epoch):
@@ -317,7 +310,7 @@ def train_test(model, train_data, test_data, epoch):
         model.optimizer.zero_grad()
         targets, scores = forward(model, data, epoch)
         targets = trans_to_cuda(targets).long()
-        loss = model.loss_function(scores, targets - 1) + model.opt.lamda*cor_loss(model.global_agg[0].q_list)
+        loss = model.loss_function(scores, targets - 1) #+ model.opt.lamda*cor_loss(model.global_agg[0].q_list)
         loss.backward()
         model.optimizer.step()
         total_loss += loss
