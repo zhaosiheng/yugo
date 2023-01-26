@@ -163,9 +163,7 @@ class CombineGraph(Module):
         
         self.gama = gama
         '''
-        print(g_h.shape)
-        print(hidden.shape)
-        hs = hs.unsqueeze(-2).repeat(1, len, 1)
+        hs = hs.unsqueeze(-2).repeat(1, len + 1, 1)
         nh = torch.matmul(torch.cat([pos_emb, hidden], -1), self.w_1)
         nh = torch.tanh(nh)
 
@@ -177,6 +175,8 @@ class CombineGraph(Module):
         
         nh = torch.sigmoid(self.glu1(nh) + self.glu2(hs) + self.glu3(zr.unsqueeze(-2)))
         beta = torch.matmul(nh, self.w_2)
+        print(mask.shape)
+        print(beta.shape)
         beta = beta * mask
         select = torch.sum(beta * hidden, 1)
         #w[hl||hg]
