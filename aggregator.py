@@ -108,7 +108,7 @@ class GlobalAggregator(nn.Module):
         output = F.dropout(neighbor_vector, self.dropout, training=self.training)
         output = torch.matmul(output, self.w_3)
 
-        output = self.act(output)
+        #output = self.act(output)
         return output #.unsqueeze(-2).repeat(1, seqs_len, 1)
 
         '''
