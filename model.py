@@ -163,7 +163,7 @@ class CombineGraph(Module):
         
         self.gama = gama
         '''
-        hs = hs.unsqueeze(-2).repeat(1, len + 1, 1)
+        hs = hs.unsqueeze(-2).repeat(1, len, 1)
         nh = torch.matmul(torch.cat([pos_emb, hidden], -1), self.w_1)
         nh = torch.tanh(nh)
 
@@ -180,7 +180,7 @@ class CombineGraph(Module):
         tmp = trans_to_cuda(tmp)
         mask = torch.cat([mask, tmp], -2)
         '''
-        
+
         beta = beta * mask
         select = torch.sum(beta * hidden, 1)
         #w[hl||hg]
