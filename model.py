@@ -178,8 +178,6 @@ class CombineGraph(Module):
 
         tmp = torch.tensor(1,dtype = torch.float).unsqueeze(0).unsqueeze(0).repeat(batch_size, 1, 1)
         tmp = trans_to_cuda(tmp)
-        print(tmp.shape)
-        print(mask.shape)
         mask = torch.cat([mask, tmp], -2)
         beta = beta * mask
         select = torch.sum(beta * torch.cat([hidden,g_h], -2), 1)
@@ -311,7 +309,7 @@ def forward(model, data, epoch):
 
 def train_test(model, train_data, test_data, epoch):
     print('start training: ', datetime.datetime.now())
-    '''
+    
     model.train()
     total_loss = 0.0
     train_loader = torch.utils.data.DataLoader(train_data, num_workers=4, batch_size=model.batch_size,
@@ -326,7 +324,7 @@ def train_test(model, train_data, test_data, epoch):
         total_loss += loss
     print('\tLoss:\t%.3f' % total_loss)
     model.scheduler.step()
-'''
+
     print('start predicting: ', datetime.datetime.now())
     model.eval()
     test_loader = torch.utils.data.DataLoader(test_data, num_workers=4, batch_size=model.batch_size,
