@@ -168,6 +168,7 @@ class CombineGraph(Module):
         hs = hs.unsqueeze(-2).repeat(1, len, 1)
         nh = torch.matmul(torch.cat([pos_emb, hidden], -1), self.w_1)
         nh = torch.tanh(nh)
+        print(nh.shape)
         #nh = pos_emb + hidden
         
         zr = hidden[torch.arange(batch_size).long(), torch.sum(mask, 1).squeeze().long() - 1]
