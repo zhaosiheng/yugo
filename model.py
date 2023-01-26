@@ -163,6 +163,8 @@ class CombineGraph(Module):
         
         self.gama = gama
         '''
+        print(g_h.shape)
+        print(hidden.shape)
         hs = hs.unsqueeze(-2).repeat(1, len, 1)
         nh = torch.matmul(torch.cat([pos_emb, hidden], -1), self.w_1)
         nh = torch.tanh(nh)
