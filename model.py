@@ -178,8 +178,6 @@ class CombineGraph(Module):
 
         tmp = torch.tensor(1,dtype = torch.float).unsqueeze(0).unsqueeze(0).repeat(self.batch_size, 1, 1)
         tmp = trans_to_cuda(tmp)
-        print(mask.shape)
-        print(tmp.shape)
         mask = torch.cat([mask, tmp], -2)
         beta = beta * mask
         select = torch.sum(beta * torch.cat([hidden,g_h], -2), 1)
