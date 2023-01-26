@@ -176,7 +176,7 @@ class CombineGraph(Module):
         nh = torch.sigmoid(self.glu1(nh) + self.glu2(hs) + self.glu3(zr.unsqueeze(-2)))
         beta = torch.matmul(nh, self.w_2)
 
-        tmp = torch.tensor(1,dtype = torch.float).unsqueeze(0).unsqueeze(0).repeat(self.batch_size, 1, 1)
+        tmp = torch.tensor(1,dtype = torch.float).unsqueeze(0).unsqueeze(0).repeat(batch_size, 1, 1)
         tmp = trans_to_cuda(tmp)
         print(tmp.shape)
         print(mask.shape)
