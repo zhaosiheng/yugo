@@ -98,7 +98,7 @@ class GlobalAggregator(nn.Module):
             alpha = torch.matmul(alpha, self.w_2).squeeze(-1)
             mask = -9e15 * torch.ones_like(alpha)
             alpha = torch.where(neighbor_weight==0, mask,alpha)
-            print(torch.softmax(alpha, -1))
+            print(torch.softmax(alpha, -1).shape)
             alpha = torch.softmax(alpha, -1).unsqueeze(-1)
             neighbor_vector = torch.sum(alpha * neighbor_vector, dim=-2).unsqueeze(-2)
 
