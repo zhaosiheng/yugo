@@ -184,7 +184,7 @@ class CombineGraph(Module):
         beta = beta * mask
         select = torch.sum(beta * hidden, 1)
         #w[hl||hg]
-        select = torch.matmul(torch.cat([select, g_h.squeeze(-2)], -1), self.yogo)+select
+        #select = torch.matmul(torch.cat([select, g_h.squeeze(-2)], -1), self.yogo)+select
 
            
 
