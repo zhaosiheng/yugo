@@ -87,6 +87,7 @@ def main():
     for i in range(9):
         best_result.append([0, 0, 0, 0])
         best_epoch.append([0, 0, 0, 0])
+        
     for epoch in range(opt.epoch):
         print('-------------------------------------------------------')
         print('epoch: ', epoch)
