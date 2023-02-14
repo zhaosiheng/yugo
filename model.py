@@ -218,7 +218,7 @@ def train_test(model, train_data, test_data):
             for score, target, mask, len_ in zip(sub_scores, targets, test_data.mask, len_data):
                 #@20
                 if len_<=40:
-                    print("in")
+                    print("in",len_)
                     for i in range(8):
                         if len_>=5*i and len_<5*(i+1):
                             hit[i].append(np.isin(target - 1, score))
