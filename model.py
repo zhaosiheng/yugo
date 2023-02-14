@@ -240,7 +240,7 @@ def train_test(model, train_data, test_data):
                             mrr_alias[i].append(0)
                         else:
                             mrr_alias[i].append(1 / (np.where(score == target - 1)[0][0] + 1))                        
-                if len_>=5*8:
+                if len_>40:
                     hit_alias[8].append(np.isin(target - 1, score))
                     if len(np.where(score == target - 1)[0]) == 0:
                         mrr_alias[8].append(0)
@@ -250,6 +250,7 @@ def train_test(model, train_data, test_data):
 
         for i in range(9):
             result[0].append(np.mean(hit[i]) * 100)
+            print(len(result[0]))
             result[1].append(np.mean(mrr[i]) * 100)       
             result[2].append(np.mean(hit_alias[i]) * 100)
             result[3].append(np.mean(mrr_alias[i]) * 100)
