@@ -250,7 +250,7 @@ def train_test(model, train_data, test_data):
 
 
         result.append(np.mean(hit) * 100)
-        print(hit.shape)
+        print((np.array(hit)).shape)
         result.append(np.mean(mrr) * 100)
         
         result.append(np.mean(hit_alias) * 100)
