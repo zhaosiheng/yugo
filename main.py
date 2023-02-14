@@ -112,7 +112,8 @@ def main():
                     best_result[i][3] = mrr_alias[i]
                     best_epoch[i][3] = epoch
                     flag = 1
-                print('Current Result:',i*5)
+                print('Session Length:',i*5)
+                print('Current Result:')
                 print('\tRecall@20:\t%.4f\tMMR@20:\t%.4f' % (hit[i], mrr[i]))
                 print('Best Result:')
                 print('\tRecall@20:\t%.4f\tMMR@20:\t%.4f\tEpoch:\t%d,\t%d' % (

@@ -248,9 +248,9 @@ def train_test(model, train_data, test_data):
                         mrr_alias[i].append(1 / (np.where(score == target - 1)[0][0] + 1))
                 
 
-        print("look here",len(hit))
-        result.append(np.mean(hit,axis=0) * 100)
         
+        result.append(np.mean(hit,axis=0) * 100)
+        print("look here",len(result[0]))
         result.append(np.mean(mrr,axis=0) * 100)
         
         result.append(np.mean(hit_alias,axis=0) * 100)
