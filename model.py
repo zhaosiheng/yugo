@@ -181,7 +181,7 @@ def forward(model, data, short_long = False):
 
 def train_test(model, train_data, test_data):
     print('start training: ', datetime.datetime.now())
-    '''
+    
     model.train()
     total_loss = 0.0
     train_loader = torch.utils.data.DataLoader(train_data, num_workers=4, batch_size=model.batch_size,
@@ -196,7 +196,7 @@ def train_test(model, train_data, test_data):
         total_loss += loss
     print('\tLoss:\t%.3f' % total_loss)
     model.scheduler.step()
-    '''
+    
     print('start predicting: ', datetime.datetime.now())
     model.eval()
     test_loader = torch.utils.data.DataLoader(test_data, num_workers=4, batch_size=model.batch_size,
