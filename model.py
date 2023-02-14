@@ -249,18 +249,6 @@ def train_test(model, train_data, test_data):
                 
 
 
-                    
-            for score, target, mask in zip(sub_scores_alias, targets, test_data.mask):
-                #@10
-                if len_<=5:
-                    hit_alias.append(np.isin(target - 1, score))
-                    if len(np.where(score == target - 1)[0]) == 0:
-                        mrr_alias.append(0)
-                    else:
-                        mrr_alias.append(1 / (np.where(score == target - 1)[0][0] + 1))
-                else:
-
-
         result.append(np.mean(hit) * 100)
         result.append(np.mean(mrr) * 100)
         
