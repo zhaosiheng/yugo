@@ -224,7 +224,7 @@ def train_test(model, train_data, test_data):
                             mrr[i].append(0)
                         else:
                             mrr[i].append(1 / (np.where(score == target - 1)[0][0] + 1))                        
-                if len_>=5*8:
+                if len_>40:
                     hit[8].append(np.isin(target - 1, score))
                     if len(np.where(score == target - 1)[0]) == 0:
                         mrr[8].append(0)
