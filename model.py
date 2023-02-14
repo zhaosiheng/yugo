@@ -250,8 +250,6 @@ def train_test(model, train_data, test_data):
 
         for i in range(9):
             result[0].append(np.mean(hit[i]) * 100)
-            print("look here",len(hit[0]))
-            print("look here",len(result[0]))
             result[1].append(np.mean(mrr[i]) * 100)       
             result[2].append(np.mean(hit_alias[i]) * 100)
             result[3].append(np.mean(mrr_alias[i]) * 100)
