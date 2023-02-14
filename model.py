@@ -224,12 +224,12 @@ def train_test(model, train_data, test_data):
                             mrr[i].append(0)
                         else:
                             mrr[i].append(1 / (np.where(score == target - 1)[0][0] + 1))                        
-                if len_>=5*9:
-                    hit[i].append(np.isin(target - 1, score))
+                if len_>=5*8:
+                    hit[8].append(np.isin(target - 1, score))
                     if len(np.where(score == target - 1)[0]) == 0:
-                        mrr[i].append(0)
+                        mrr[8].append(0)
                     else:
-                        mrr[i].append(1 / (np.where(score == target - 1)[0][0] + 1))
+                        mrr[8].append(1 / (np.where(score == target - 1)[0][0] + 1))
             
             for score, target, mask, len_ in zip(sub_scores, targets, test_data.mask, len_data):
                 #@10
@@ -240,12 +240,12 @@ def train_test(model, train_data, test_data):
                             mrr_alias[i].append(0)
                         else:
                             mrr_alias[i].append(1 / (np.where(score == target - 1)[0][0] + 1))                        
-                if len_>=5*9:
-                    hit_alias[i].append(np.isin(target - 1, score))
+                if len_>=5*8:
+                    hit_alias[8].append(np.isin(target - 1, score))
                     if len(np.where(score == target - 1)[0]) == 0:
-                        mrr_alias[i].append(0)
+                        mrr_alias[8].append(0)
                     else:
-                        mrr_alias[i].append(1 / (np.where(score == target - 1)[0][0] + 1))
+                        mrr_alias[8].append(1 / (np.where(score == target - 1)[0][0] + 1))
                 
 
         for i in range(9):
