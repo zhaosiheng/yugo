@@ -81,7 +81,8 @@ def main():
 
     print(opt)
     start = time.time()
-
+    best_result = []
+    best_epoch = []
     for i in range(9):
         best_result.append([0, 0, 0, 0])
         best_epoch.append([0, 0, 0, 0])
