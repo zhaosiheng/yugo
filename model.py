@@ -181,7 +181,7 @@ def forward(model, data, short_long = False):
 
 def train_test(model, train_data, test_data):
     print('start training: ', datetime.datetime.now())
-    
+    '''
     model.train()
     total_loss = 0.0
     train_loader = torch.utils.data.DataLoader(train_data, num_workers=4, batch_size=model.batch_size,
@@ -196,14 +196,14 @@ def train_test(model, train_data, test_data):
         total_loss += loss
     print('\tLoss:\t%.3f' % total_loss)
     model.scheduler.step()
-    
+    '''
     print('start predicting: ', datetime.datetime.now())
     model.eval()
     test_loader = torch.utils.data.DataLoader(test_data, num_workers=4, batch_size=model.batch_size,
                                               shuffle=False, pin_memory=True)
 
     if model.opt.s_l==True:
-        result = []
+        result = [[] for i in range(4)]
         hit, mrr = [[] for i in range(9)], [[] for i in range(9)]
         hit_alias, mrr_alias = [[] for i in range(9)], [[] for i in range(9)]
         
@@ -248,16 +248,15 @@ def train_test(model, train_data, test_data):
                         mrr_alias[i].append(1 / (np.where(score == target - 1)[0][0] + 1))
                 
 
-        
-        result.append(np.mean(hit,axis=0) * 100)
-        print("look here",len(result[0]))
-        result.append(np.mean(mrr,axis=0) * 100)
-        
-        result.append(np.mean(hit_alias,axis=0) * 100)
-        result.append(np.mean(mrr_alias,axis=0) * 100)
+        for i in range(9):
+            result[0].append(np.mean(hit[i]) * 100)
+            print("look here",len(result[0]))
+            result[1].append(np.mean(mrr[i]) * 100)       
+            result[2].append(np.mean(hit_alias[i]) * 100)
+            result[3].append(np.mean(mrr_alias[i]) * 100)
 
 
-        return result
+        return result#4*9
     
 
 
