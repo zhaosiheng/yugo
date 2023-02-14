@@ -204,8 +204,8 @@ def train_test(model, train_data, test_data):
 
     if model.opt.s_l==True:
         result = []
-        hit, mrr = [], []
-        hit_alias, mrr_alias = [], []
+        hit, mrr = [[] for i in range(9)], [[] for i in range(9)]
+        hit_alias, mrr_alias = [[] for i in range(9)], [[] for i in range(9)]
         
         for data in test_loader:
             targets, scores, len_data = forward(model, data, short_long=model.opt.s_l)
@@ -219,42 +219,42 @@ def train_test(model, train_data, test_data):
                 #@20
                 for i in range(8):
                     if len_>=5*i and len_<5*(i+1):
-                        hit.append(np.isin(target - 1, score))
+                        hit[i].append(np.isin(target - 1, score))
                         if len(np.where(score == target - 1)[0]) == 0:
-                            mrr.append(0)
+                            mrr[i].append(0)
                         else:
-                            mrr.append(1 / (np.where(score == target - 1)[0][0] + 1))                        
+                            mrr[i].append(1 / (np.where(score == target - 1)[0][0] + 1))                        
                 if len_>=5*9:
-                    hit.append(np.isin(target - 1, score))
+                    hit[i].append(np.isin(target - 1, score))
                     if len(np.where(score == target - 1)[0]) == 0:
-                        mrr.append(0)
+                        mrr[i].append(0)
                     else:
-                        mrr.append(1 / (np.where(score == target - 1)[0][0] + 1))
+                        mrr[i].append(1 / (np.where(score == target - 1)[0][0] + 1))
             
             for score, target, mask, len_ in zip(sub_scores, targets, test_data.mask, len_data):
                 #@10
                 for i in range(8):
                     if len_>=5*i and len_<5*(i+1):
-                        hit_alias.append(np.isin(target - 1, score))
+                        hit_alias[i].append(np.isin(target - 1, score))
                         if len(np.where(score == target - 1)[0]) == 0:
-                            mrr_alias.append(0)
+                            mrr_alias[i].append(0)
                         else:
-                            mrr_alias.append(1 / (np.where(score == target - 1)[0][0] + 1))                        
+                            mrr_alias[i].append(1 / (np.where(score == target - 1)[0][0] + 1))                        
                 if len_>=5*9:
-                    hit_alias.append(np.isin(target - 1, score))
+                    hit_alias[i].append(np.isin(target - 1, score))
                     if len(np.where(score == target - 1)[0]) == 0:
-                        mrr_alias.append(0)
+                        mrr_alias[i].append(0)
                     else:
-                        mrr_alias.append(1 / (np.where(score == target - 1)[0][0] + 1))
+                        mrr_alias[i].append(1 / (np.where(score == target - 1)[0][0] + 1))
                 
 
 
-        result.append(np.mean(hit) * 100)
-        print((np.array(hit)).shape)
-        result.append(np.mean(mrr) * 100)
+        result.append(np.mean(hit,axis=1) * 100)
+        print(len(result[0]))
+        result.append(np.mean(mrr,axis=1) * 100)
         
-        result.append(np.mean(hit_alias) * 100)
-        result.append(np.mean(mrr_alias) * 100)
+        result.append(np.mean(hit_alias,axis=1) * 100)
+        result.append(np.mean(mrr_alias,axis=1) * 100)
 
 
         return result
