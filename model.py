@@ -217,14 +217,15 @@ def train_test(model, train_data, test_data):
             len_data = len_data.numpy()
             for score, target, mask, len_ in zip(sub_scores, targets, test_data.mask, len_data):
                 #@20
-                for i in range(8):
-                    if len_>=5*i and len_<5*(i+1):
-                        hit[i].append(np.isin(target - 1, score))
-                        if len(np.where(score == target - 1)[0]) == 0:
-                            mrr[i].append(0)
-                        else:
-                            mrr[i].append(1 / (np.where(score == target - 1)[0][0] + 1))                        
-                if len_>40:
+                if len_<=40:
+                    for i in range(8):
+                        if len_>=5*i and len_<5*(i+1):
+                            hit[i].append(np.isin(target - 1, score))
+                            if len(np.where(score == target - 1)[0]) == 0:
+                                mrr[i].append(0)
+                            else:
+                                mrr[i].append(1 / (np.where(score == target - 1)[0][0] + 1))                        
+                else:
                     print("in")
                     hit[8].append(np.isin(target - 1, score))
                     if len(np.where(score == target - 1)[0]) == 0:
@@ -234,14 +235,15 @@ def train_test(model, train_data, test_data):
             
             for score, target, mask, len_ in zip(sub_scores, targets, test_data.mask, len_data):
                 #@10
-                for i in range(8):
-                    if len_>=5*i and len_<5*(i+1):
-                        hit_alias[i].append(np.isin(target - 1, score))
-                        if len(np.where(score == target - 1)[0]) == 0:
-                            mrr_alias[i].append(0)
-                        else:
-                            mrr_alias[i].append(1 / (np.where(score == target - 1)[0][0] + 1))                        
-                if len_>40:
+                if len_<=40:
+                    for i in range(8):
+                        if len_>=5*i and len_<5*(i+1):
+                            hit_alias[i].append(np.isin(target - 1, score))
+                            if len(np.where(score == target - 1)[0]) == 0:
+                                mrr_alias[i].append(0)
+                            else:
+                                mrr_alias[i].append(1 / (np.where(score == target - 1)[0][0] + 1))                        
+                else:
                     hit_alias[8].append(np.isin(target - 1, score))
                     if len(np.where(score == target - 1)[0]) == 0:
                         mrr_alias[8].append(0)
