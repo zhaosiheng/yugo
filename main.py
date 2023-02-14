@@ -118,12 +118,13 @@ def main():
                 print('Best Result:')
                 print('\tRecall@20:\t%.4f\tMMR@20:\t%.4f\tEpoch:\t%d,\t%d' % (
                     best_result[i][0], best_result[i][1], best_epoch[i][0], best_epoch[i][1]))
-                
+                '''
                 print('Current Result:')
                 print('\tRecall@10:\t%.4f\tMMR@10:\t%.4f' % (hit_alias[i], mrr_alias[i]))
                 print('Best Result:')
                 print('\tRecall@10:\t%.4f\tMMR@10:\t%.4f\tEpoch:\t%d,\t%d' % (
                     best_result[i][2], best_result[i][3], best_epoch[i][2], best_epoch[i][3]))
+                '''
             bad_counter += 1 - flag
             if bad_counter >= opt.patience:
                 break
