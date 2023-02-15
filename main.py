@@ -48,7 +48,7 @@ parser.add_argument('--seed', type=int, default=1000)
 parser.add_argument('--t', type=float, default=1.0)
 
 parser.add_argument('--lamda', type=float, default=0)
-
+parser.add_argument('--s_l', action='store_true', default=False)
 
 opt = parser.parse_args()
 
@@ -96,45 +96,91 @@ def main():
 
     print(opt)
     start = time.time()
-    best_result = [0, 0, 0, 0]
-    best_epoch = [0, 0, 0, 0]
     bad_counter = 0
-
+    best_result = []
+    best_epoch = []
+    for i in range(9):
+        best_result.append([0, 0, 0, 0])
+        best_epoch.append([0, 0, 0, 0])
+        
     for epoch in range(opt.epoch):
         print('-------------------------------------------------------')
         print('epoch: ', epoch)
-        hit, mrr, hit_alias, mrr_alias = train_test(model, train_data, test_data, epoch)
-        flag = 0
-        if hit >= best_result[0]:
-            best_result[0] = hit
-            best_epoch[0] = epoch
-            flag = 1
-        if mrr >= best_result[1]:
-            best_result[1] = mrr
-            best_epoch[1] = epoch
-            flag = 1
-        if hit_alias >= best_result[2]:
-            best_result[2] = hit_alias
-            best_epoch[2] = epoch
-            flag = 1
-        if mrr_alias >= best_result[3]:
-            best_result[3] = mrr_alias
-            best_epoch[3] = epoch
-            flag = 1
-        print('Current Result:')
-        print('\tRecall@20:\t%.4f\tMMR@20:\t%.4f\tRecall@10:\t%.4f\tMMR@10:\t%.4f' % (hit, mrr, hit_alias, mrr_alias))
-        print('Best Result:')
-        print('\tRecall@20:\t%.4f\tMMR@20:\t%.4f\tRecall@10:\t%.4f\tMMR@10:\t%.4f\tEpoch:\t%d,\t%d,\t%d,\t%d' % (
-            best_result[0], best_result[1], best_result[2], best_result[3], best_epoch[0], best_epoch[1], best_epoch[2], best_epoch[3]))
-        #print('gama:')
-        #print(model.gama)
-        bad_counter += 1 - flag
-        if bad_counter >= opt.patience:
-            break
+        if opt.s_l==True:
+            hit, mrr, hit_alias, mrr_alias= train_test(model, train_data, test_data)
+            flag = 0
+            for i in range(9):
+                if hit[i] >= best_result[i][0]:
+                    best_result[i][0] = hit[i]
+                    best_epoch[i][0] = epoch
+                    flag = 1
+                if mrr[i] >= best_result[i][1]:
+                    best_result[i][1] = mrr[i]
+                    best_epoch[i][1] = epoch
+                    flag = 1
+                    
+                if hit_alias[i] >= best_result[i][2]:
+                    best_result[i][2] = hit_alias[i]
+                    best_epoch[i][2] = epoch
+                    flag = 1
+                if mrr_alias[i] >= best_result[i][3]:
+                    best_result[i][3] = mrr_alias[i]
+                    best_epoch[i][3] = epoch
+                    flag = 1
+                print('Session Length:',i*5)
+                print('Current Result:')
+                print('\tRecall@20:\t%.4f\tMMR@20:\t%.4f' % (hit[i], mrr[i]))
+                print('Best Result:')
+                print('\tRecall@20:\t%.4f\tMMR@20:\t%.4f\tEpoch:\t%d,\t%d' % (
+                    best_result[i][0], best_result[i][1], best_epoch[i][0], best_epoch[i][1]))
+                '''
+                print('Current Result:')
+                print('\tRecall@10:\t%.4f\tMMR@10:\t%.4f' % (hit_alias[i], mrr_alias[i]))
+                print('Best Result:')
+                print('\tRecall@10:\t%.4f\tMMR@10:\t%.4f\tEpoch:\t%d,\t%d' % (
+                    best_result[i][2], best_result[i][3], best_epoch[i][2], best_epoch[i][3]))
+                '''
+            bad_counter += 1 - flag
+            if bad_counter >= opt.patience:
+                break
+        else:
+            hit, mrr, hit_alias, mrr_alias= train_test(model, train_data, test_data)
+            flag = 0
+            if hit >= best_result[0][0]:
+                best_result[0][0] = hit
+                best_epoch[0][0] = epoch
+                flag = 1
+            if mrr >= best_result[0][1]:
+                best_result[0][1] = mrr
+                best_epoch[0][1] = epoch
+                flag = 1
+                
+            if hit_alias >= best_result[0][2]:
+                best_result[0][2] = hit_alias
+                best_epoch[0][2] = epoch
+                flag = 1
+            if mrr_alias >= best_result[0][3]:
+                best_result[0][3] = mrr_alias
+                best_epoch[0][3] = epoch
+                flag = 1
+            print('Current Result:')
+            print('\tRecall@20:\t%.4f\tMMR@20:\t%.4f' % (hit, mrr))
+            print('Best Result:')
+            print('\tRecall@20:\t%.4f\tMMR@20:\t%.4f\tEpoch:\t%d,\t%d' % (
+                best_result[0][0], best_result[0][1], best_epoch[0][0], best_epoch[0][1]))
+            
+            print('Current Result:')
+            print('\tRecall@10:\t%.4f\tMMR@10:\t%.4f' % (hit_alias, mrr_alias))
+            print('Best Result:')
+            print('\tRecall@10:\t%.4f\tMMR@10:\t%.4f\tEpoch:\t%d,\t%d' % (
+                best_result[0][2], best_result[0][3], best_epoch[0][2], best_epoch[0][3]))
+            
+            bad_counter += 1 - flag
+            if bad_counter >= opt.patience:
+                break
     print('-------------------------------------------------------')
     end = time.time()
     print("Run time: %f s" % (end - start))
-
 
 if __name__ == '__main__':
     main()

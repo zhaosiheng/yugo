@@ -334,6 +334,66 @@ def train_test(model, train_data, test_data, epoch):
     model.eval()
     test_loader = torch.utils.data.DataLoader(test_data, num_workers=4, batch_size=model.batch_size,
                                               shuffle=False, pin_memory=True)
+    
+    
+    if model.opt.s_l==True:
+        result = [[] for i in range(4)]
+        hit, mrr = [[] for i in range(9)], [[] for i in range(9)]
+        hit_alias, mrr_alias = [[] for i in range(9)], [[] for i in range(9)]
+        
+        for data in test_loader:
+            targets, scores, len_data = forward(model, data, short_long=model.opt.s_l)
+            sub_scores = scores.topk(20)[1]
+            sub_scores_alias = scores.topk(10)[1]
+            sub_scores = trans_to_cpu(sub_scores).detach().numpy()
+            sub_scores_alias = trans_to_cpu(sub_scores_alias).detach().numpy()
+            targets = targets.numpy()
+            len_data = len_data.numpy()
+            for score, target, mask, len_ in zip(sub_scores, targets, test_data.mask, len_data):
+                #@20
+                if len_<=40:
+                    for i in range(8):
+                        if len_>=5*i and len_<5*(i+1):
+                            hit[i].append(np.isin(target - 1, score))
+                            if len(np.where(score == target - 1)[0]) == 0:
+                                mrr[i].append(0)
+                            else:
+                                mrr[i].append(1 / (np.where(score == target - 1)[0][0] + 1))                        
+                else:
+                    hit[8].append(np.isin(target - 1, score))
+                    if len(np.where(score == target - 1)[0]) == 0:
+                        mrr[8].append(0)
+                    else:
+                        mrr[8].append(1 / (np.where(score == target - 1)[0][0] + 1))
+            
+            for score, target, mask, len_ in zip(sub_scores, targets, test_data.mask, len_data):
+                #@10
+                if len_<=40:
+                    for i in range(8):
+                        if len_>=5*i and len_<5*(i+1):
+                            hit_alias[i].append(np.isin(target - 1, score))
+                            if len(np.where(score == target - 1)[0]) == 0:
+                                mrr_alias[i].append(0)
+                            else:
+                                mrr_alias[i].append(1 / (np.where(score == target - 1)[0][0] + 1))                        
+                else:
+                    hit_alias[8].append(np.isin(target - 1, score))
+                    if len(np.where(score == target - 1)[0]) == 0:
+                        mrr_alias[8].append(0)
+                    else:
+                        mrr_alias[8].append(1 / (np.where(score == target - 1)[0][0] + 1))
+                
+
+        for i in range(9):
+            print("num of ",i*5,":",len(hit[i]))
+            result[0].append(np.mean(hit[i]) * 100)
+            result[1].append(np.mean(mrr[i]) * 100)       
+            result[2].append(np.mean(hit_alias[i]) * 100)
+            result[3].append(np.mean(mrr_alias[i]) * 100)
+
+
+        return result#4*9
+    
     result = []
     hit, mrr, hit_alias, mrr_alias = [], [], [], []
     for data in test_loader:
