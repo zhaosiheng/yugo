@@ -312,7 +312,7 @@ def forward(model, data, epoch, short_long = False):
     return targets, model.compute_scores(seq_hidden, mask, inputs, g_hidden)
 
 
-def train_test(model, train_data, test_data, epoch = 6):
+def train_test(model, train_data, test_data):
     print('start training: ', datetime.datetime.now())
     
     model.train()
@@ -321,7 +321,7 @@ def train_test(model, train_data, test_data, epoch = 6):
                                                shuffle=True, pin_memory=True)
     for data in tqdm(train_loader):
         model.optimizer.zero_grad()
-        targets, scores = forward(model, data, epoch)
+        targets, scores = forward(model, data, 6)
         targets = trans_to_cuda(targets).long()
         loss = model.loss_function(scores, targets - 1) #+ model.opt.lamda*cor_loss(model.global_agg[0].q_list)
         loss.backward()
@@ -397,7 +397,7 @@ def train_test(model, train_data, test_data, epoch = 6):
     result = []
     hit, mrr, hit_alias, mrr_alias = [], [], [], []
     for data in test_loader:
-        targets, scores = forward(model, data, epoch)
+        targets, scores = forward(model, data, 6)
         sub_scores = scores.topk(20)[1]
         sub_scores_alias = scores.topk(10)[1]
         sub_scores = trans_to_cpu(sub_scores).detach().numpy()
