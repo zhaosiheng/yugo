@@ -295,7 +295,7 @@ def trans_to_cpu(variable):
         return variable
 
 
-def forward(model, data, epoch, short_long = False):
+def forward(model, data, short_long = False):
     alias_inputs, adj, items, mask, targets, inputs = data
     len_data = torch.sum(mask.float().unsqueeze(-1), 1).squeeze(-1)
     alias_inputs = trans_to_cuda(alias_inputs).long()
@@ -321,7 +321,7 @@ def train_test(model, train_data, test_data):
                                                shuffle=True, pin_memory=True)
     for data in tqdm(train_loader):
         model.optimizer.zero_grad()
-        targets, scores = forward(model, data, 6)
+        targets, scores = forward(model, data)
         targets = trans_to_cuda(targets).long()
         loss = model.loss_function(scores, targets - 1) #+ model.opt.lamda*cor_loss(model.global_agg[0].q_list)
         loss.backward()
@@ -397,7 +397,7 @@ def train_test(model, train_data, test_data):
     result = []
     hit, mrr, hit_alias, mrr_alias = [], [], [], []
     for data in test_loader:
-        targets, scores = forward(model, data, 6)
+        targets, scores = forward(model, data)
         sub_scores = scores.topk(20)[1]
         sub_scores_alias = scores.topk(10)[1]
         sub_scores = trans_to_cpu(sub_scores).detach().numpy()
