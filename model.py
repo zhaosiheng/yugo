@@ -312,7 +312,7 @@ def forward(model, data, epoch, short_long = False):
     return targets, model.compute_scores(seq_hidden, mask, inputs, g_hidden)
 
 
-def train_test(model, train_data, test_data, epoch):
+def train_test(model, train_data, test_data, epoch = 6):
     print('start training: ', datetime.datetime.now())
     
     model.train()
