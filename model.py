@@ -295,8 +295,9 @@ def trans_to_cpu(variable):
         return variable
 
 
-def forward(model, data, epoch):
+def forward(model, data, epoch, short_long = False):
     alias_inputs, adj, items, mask, targets, inputs = data
+    len_data = torch.sum(mask.float().unsqueeze(-1), 1).squeeze(-1)
     alias_inputs = trans_to_cuda(alias_inputs).long()
     items = trans_to_cuda(items).long()
     adj = trans_to_cuda(adj).float()
@@ -306,6 +307,8 @@ def forward(model, data, epoch):
     hidden,g_hidden = model(items, adj, mask, inputs)
     get = lambda index: hidden[index][alias_inputs[index]]
     seq_hidden = torch.stack([get(i) for i in torch.arange(len(alias_inputs)).long()])
+    if short_long == True:
+        return targets, model.compute_scores(seq_hidden, mask), len_data
     return targets, model.compute_scores(seq_hidden, mask, inputs, g_hidden)
 
 
