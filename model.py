@@ -308,7 +308,7 @@ def forward(model, data, short_long = False):
     get = lambda index: hidden[index][alias_inputs[index]]
     seq_hidden = torch.stack([get(i) for i in torch.arange(len(alias_inputs)).long()])
     if short_long == True:
-        return targets, model.compute_scores(seq_hidden, mask), len_data
+        return targets, model.compute_scores(seq_hidden, mask, inputs, g_hidden), len_data
     return targets, model.compute_scores(seq_hidden, mask, inputs, g_hidden)
 
 
