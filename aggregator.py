@@ -76,13 +76,9 @@ class GlobalAggregator(nn.Module):
         self.dim = dim
 
         #self.w_1 = nn.Parameter(torch.Tensor(self.dim + 1, self.dim))
-        self.w_list = torch.nn.ParameterList([nn.Parameter(torch.Tensor(int( self.dim/4 ), int( self.dim/4) )) for i in range(4)])
-        self.q_list = torch.nn.ParameterList([nn.Parameter(torch.Tensor(int( self.dim/4 ), 1)) for i in range(4)])
         self.w_1 = nn.Parameter(torch.Tensor(self.dim, self.dim))
         self.w_2 = nn.Parameter(torch.Tensor(self.dim, 1))
-
-
-        self.w_3 = nn.Parameter(torch.Tensor(self.dim , self.dim))
+        self.w_3 = nn.Parameter(torch.Tensor(self.dim, self.dim))
         self.bias = nn.Parameter(torch.Tensor(self.dim))
 
     def forward(self, self_vectors, neighbor_vector, batch_size, masks, neighbor_weight, extra_vector=None, t=1.0):
@@ -91,16 +87,15 @@ class GlobalAggregator(nn.Module):
             seqs_len = self_vectors.shape[1]
             neighbor_vector = neighbor_vector.view(batch_size, -1, self.dim)
             neighbor_weight = neighbor_weight.view(batch_size, -1)
-            
+
             alpha = torch.matmul(extra_vector.unsqueeze(-2).repeat(1, neighbor_vector.shape[1], 1)*neighbor_vector, self.w_1)
             #alpha = torch.matmul(torch.cat([extra_vector.unsqueeze(-2).repeat(1, neighbor_vector.shape[1], 1)*neighbor_vector, neighbor_weight.unsqueeze(-1)], -1), self.w_1)
             alpha = F.leaky_relu(alpha, negative_slope=0.2)
-            alpha = torch.matmul(alpha, self.w_2).squeeze(-1)
+            alpha = torch.matmul(alpha, self.w_2).squeeze(-1) * t
             mask = -9e15 * torch.ones_like(alpha)
             alpha = torch.where(neighbor_weight==0, mask,alpha)
-            alpha = torch.softmax(alpha / (self.dim**0.5) , -1).unsqueeze(-1)
+            alpha = torch.softmax(alpha, -1).unsqueeze(-1)
             neighbor_vector = torch.sum(alpha * neighbor_vector, dim=-2).unsqueeze(-2)
-
         else:
             neighbor_vector = torch.mean(neighbor_vector, dim=2)
         # self_vectors = F.dropout(self_vectors, 0.5, training=self.training)
@@ -108,24 +103,5 @@ class GlobalAggregator(nn.Module):
         output = F.dropout(neighbor_vector, self.dropout, training=self.training)
         output = torch.matmul(output, self.w_3)
 
-        #output = self.act(output)
+        output = self.act(output)
         return output #.unsqueeze(-2).repeat(1, seqs_len, 1)
-
-        '''
-
-
-                        neighbor_vector_list = []
-            tmp = extra_vector.unsqueeze(-2).repeat(1, neighbor_vector.shape[1], 1)*neighbor_vector
-            h_list = torch.chunk(tmp, 4, dim = -1)
-            nv_list = torch.chunk(neighbor_vector, 4, dim = -1)
-
-            for i in range(4):
-                alpha = torch.matmul(h_list[i], self.w_list[i])
-                alpha = F.leaky_relu(alpha, negative_slope=0.2)
-                alpha = torch.matmul(alpha, self.q_list[i]).squeeze(-1) * t
-                mask = -9e15 * torch.ones_like(alpha)
-                alpha = torch.where(neighbor_weight==0, mask,alpha)
-                alpha = torch.softmax(alpha, -1).unsqueeze(-1)
-                neighbor_vector_list.append(  torch.sum(alpha * nv_list[i], dim=-2).unsqueeze(-2)  )
-            neighbor_vector = torch.cat(neighbor_vector_list, -1)
-        '''
