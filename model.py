@@ -370,7 +370,7 @@ def train_test(model, train_data, test_data):
                 #@10
                 if len_<=40:
                     for i in range(8):
-                        if len_>=5*i and len_<5*(i+1):
+                        if len_>5*i and len_<=5*(i+1):
                             hit_alias[i].append(np.isin(target - 1, score))
                             if len(np.where(score == target - 1)[0]) == 0:
                                 mrr_alias[i].append(0)
