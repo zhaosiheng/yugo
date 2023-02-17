@@ -138,7 +138,7 @@ class GlobalAggregator(nn.Module):
 
 class GlobalAggregator_org(nn.Module):
     def __init__(self, dim, dropout, act=torch.relu, name=None):
-        super(GlobalAggregator, self).__init__()
+        super(GlobalAggregator_org, self).__init__()
         self.dropout = dropout
         self.act = act
         self.dim = dim
