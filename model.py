@@ -213,7 +213,7 @@ class CombineGraph(Module):
         if self.opt.g_encoder =='ng':
             h_local = F.dropout(h_local, self.dropout_local, training=self.training)
             return h_local
-        else if self.opt.g_encoder =='g':
+        elif self.opt.g_encoder =='g':
             # global
             item_neighbors = [inputs]
             weight_neighbors = []
@@ -264,7 +264,7 @@ class CombineGraph(Module):
             s_global = F.dropout(s_global, self.dropout_global, training=self.training)
             output =  h_local + s_global/mask_item.sum(-1).unsqueeze(-1).unsqueeze(-1) ################
             return output
-        else if self.opt.g_encoder =='ig':
+        elif self.opt.g_encoder =='ig':
             # global
             item_neighbors = [inputs]
             weight_neighbors = []
