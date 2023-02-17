@@ -49,7 +49,7 @@ parser.add_argument('--t', type=float, default=1.0)
 
 parser.add_argument('--lamda', type=float, default=0)
 parser.add_argument('--s_l', action='store_true', default=False)
-
+parser.add_argument('--g_encoder', default='g', help='ig/ng/g')
 opt = parser.parse_args()
 
 
