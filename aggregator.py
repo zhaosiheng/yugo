@@ -16,7 +16,7 @@ class Aggregator(nn.Module):
 
     def forward(self):
         pass
-        
+
 class SGCN(nn.Module):
     def __init__(self, dim, alpha, dropout=0.,hop=1, name=None):
         super(SGCN, self).__init__()
@@ -45,7 +45,7 @@ class SGCN(nn.Module):
         output = torch.matmul(A, output)
         output = torch.matmul(D, output)
 
-        return 
+        return output
 
 
 class LocalAggregator(nn.Module):
