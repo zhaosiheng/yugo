@@ -4,7 +4,7 @@ import numpy as np
 import torch
 from torch import nn
 from tqdm import tqdm
-from aggregator import LocalAggregator, GlobalAggregator
+from aggregator import LocalAggregator, GlobalAggregator,SGCN
 from torch.nn import Module, Parameter
 import torch.nn.functional as F
 from pprint import pprint
@@ -27,7 +27,7 @@ class CombineGraph(Module):
         
 
         # Aggregator
-        self.local_agg = LocalAggregator(self.dim, self.opt.alpha, dropout=opt.long_edge_dropout, hop=opt.hop)
+        self.local_agg = SGCN(self.dim, self.opt.alpha, dropout=opt.long_edge_dropout, hop=opt.hop)
         self.global_agg = []
         for i in range(self.hop):
             if opt.activate == 'relu':

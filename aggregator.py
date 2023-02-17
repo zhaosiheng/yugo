@@ -16,9 +16,10 @@ class Aggregator(nn.Module):
 
     def forward(self):
         pass
+        
 class SGCN(nn.Module):
     def __init__(self, dim, alpha, dropout=0.,hop=1, name=None):
-        super(LocalAggregator, self).__init__()
+        super(SGCN, self).__init__()
         self.dim = dim
         self.dropout = dropout
 
@@ -35,35 +36,16 @@ class SGCN(nn.Module):
         batch_size = h.shape[0]
         N = h.shape[1]
 
-        a_input = (h.repeat(1, 1, N).view(batch_size, N * N, self.dim)
-                   * h.repeat(1, N, 1)).view(batch_size, N, N, self.dim)
 
-        e_list = []
-        for i in range(self.range):
-            tmp = torch.matmul(a_input, self.a_list[i])
-            tmp = self.leakyrelu(tmp).squeeze(-1).view(batch_size, N, N)
-            e_list.append(tmp)
+        A = adj[:,1]/2 + adj[:,0]
+        D = torch.sum(A, -1).diag_embed().rsqrt()
+        D = torch.where(torch.isinf(D), torch.full_like(D, 0), D)
+        
+        output = torch.matmul(D, hidden)
+        output = torch.matmul(A, output)
+        output = torch.matmul(D, output)
 
-
-        mask = -9e15 * torch.ones_like(e_list[0])
-        for i in range(self.range):
-            if i<self.hop:
-                e_list[i] = torch.where(adj[:,i].eq(i+1), e_list[i], mask).exp()
-            if i>=self.hop:
-                j = -1 * (i - self.hop + 2)
-                e_list[i] = torch.where(adj[:, i].eq(j), e_list[i], mask).exp()
-            if i>0:
-                e_list[i] = F.dropout(e_list[i], self.dropout, training=self.training)
-
-
-        tmp = torch.stack(e_list).sum(dim=0)
-        s = torch.sum(tmp, dim=-1, keepdim=True)
-        s = torch.where(s.eq(0), torch.ones_like(s), s)
-        alpha = tmp / s
-        #0.0145
-        output = torch.matmul(alpha, h)
-        return output
-
+        return 
 
 
 class LocalAggregator(nn.Module):
